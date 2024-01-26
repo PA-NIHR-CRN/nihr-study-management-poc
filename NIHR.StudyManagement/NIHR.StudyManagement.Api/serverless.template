@@ -32,7 +32,8 @@
                 "Policies": [],
                 "Environment":{
                     "Variables":{
-                        "StudyManagementApiConfiguration__JwtTokenValidationConfiguration__OverrideJwtTokenValidation":"false"
+                        "StudyManagementApiConfiguration__JwtTokenValidationConfiguration__OverrideJwtTokenValidation":"false",
+                        "StudyManagementApiConfiguration__JwtTokenValidationConfiguration__Authority":"false"
                     }
                 },
             "Events": {
