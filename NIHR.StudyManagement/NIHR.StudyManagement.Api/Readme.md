@@ -27,5 +27,3 @@ have the .NET project built inside the container.
 
 To deploy your Serverless application, right click the project in Solution Explorer and select *Publish to AWS Lambda*. Most of the default values (aside from AWS credentials)
 should default to sandbox entries. Deployments to stable environments such as DEV and beyond will be handled outside of this solution by infrastructure code.
-
-
