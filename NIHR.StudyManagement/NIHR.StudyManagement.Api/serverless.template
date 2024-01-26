@@ -16,17 +16,25 @@
         },
         "StudyManagementLambda": {
           "Type": "AWS::Serverless::Function",
-          "Properties": {
-            "Handler": "NIHR.StudyManagement.Api::NIHR.StudyManagement.Api.LambdaEntryPoint::FunctionHandlerAsync",
-            "Description": "NIHR Study Management (sandbox) lambda handling API Gateway events. ASP NET Core API",
-            "Runtime": "arn:aws:lambda:eu-west-2::runtime:4962cf2d035ee833b401c9071111b154e315c034923467e8a37bb033a496cfae",
-            "FunctionName": "nihrd-lambda-sandbox-study-management",
-            "CodeUri": "",
-            "MemorySize": 256,
-            "Timeout": 30,
-            "Role": "arn:aws:iam::462580661309:role/service-role/nihrd-lambda-dev-rddi-cognito-pre-token-authorizer-role-9tzk20q8",
-            "Policies": [
-            ],
+              "Properties": {
+                "PackageType": "Image",
+                "FunctionName": "nihrd-lambda-sandbox-study-management",
+                "Role": "arn:aws:iam::462580661309:role/service-role/nihrd-lambda-dev-rddi-cognito-pre-token-authorizer-role-9tzk20q8",
+                "Description": "NIHR Study Management (sandbox) lambda handling API Gateway events. ASP NET Core API",
+                "ImageConfig": {
+                  "Command": [
+                    "NIHR.StudyManagement.Api::NIHR.StudyManagement.Api.LambdaEntryPoint::FunctionHandlerAsync"
+                  ]
+                },
+                "ImageUri": "",
+                "MemorySize": 256,
+                "Timeout": 30,
+                "Policies": [],
+                "Environment":{
+                    "Variables":{
+                        "StudyManagementApiConfiguration__JwtTokenValidationConfiguration__OverrideJwtTokenValidation":"false"
+                    }
+                },
             "Events": {
               "SwaggerProxyRoute": {
                 "Type": "Api",
@@ -40,7 +48,7 @@
                 "Type": "Api",
                 "Properties": {
                   "Path": "/api/v1/Home",
-                  "Method": "POST",
+                  "Method": "GET",
                   "RestApiId": { "Ref" : "StudyManagementApi" }
                 }
               },
@@ -48,7 +56,7 @@
                 "Type": "Api",
                 "Properties": {
                   "Path": "/api/v1/Home/authenticated",
-                  "Method": "PATCH",
+                  "Method": "GET",
                   "RestApiId": { "Ref" : "StudyManagementApi" }
                 }
               }
