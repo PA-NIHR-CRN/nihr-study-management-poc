@@ -1,10 +1,10 @@
-﻿namespace NIHR.StudyManagement.Api.Configuration
+﻿namespace NIHR.StudyManagement.API.Configuration
 {
-    public class StudyManagementApiConfiguration
+    public class StudyManagementAPIConfigurationx
     {
         public JwtTokenValidationConfiguration JwtTokenValidationConfiguration { get; set; }
 
-        public StudyManagementApiConfiguration()
+        public StudyManagementAPIConfigurationx()
         {
             JwtTokenValidationConfiguration = new JwtTokenValidationConfiguration();
         }

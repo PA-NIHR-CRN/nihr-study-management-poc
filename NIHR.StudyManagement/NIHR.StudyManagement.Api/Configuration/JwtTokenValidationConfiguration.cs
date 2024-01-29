@@ -1,4 +1,4 @@
-﻿namespace NIHR.StudyManagement.Api.Configuration
+﻿namespace NIHR.StudyManagement.API.Configuration
 {
     public class JwtTokenValidationConfiguration
     {

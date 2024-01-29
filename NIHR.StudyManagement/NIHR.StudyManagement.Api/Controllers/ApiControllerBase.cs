@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace NIHR.StudyManagement.Api.Controllers
+namespace NIHR.StudyManagement.API.Controllers
 {
     [ApiController]
-    public abstract class ApiControllerBase : ControllerBase
+    public abstract class APIControllerBase : ControllerBase
     {
         [Route("/error")]
         [ApiExplorerSettings(IgnoreApi = true)]

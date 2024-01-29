@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using NIHR.StudyManagement.Api.Configuration;
+using NIHR.StudyManagement.API.Configuration;
 using System.Security.Claims;
 
-namespace NIHR.StudyManagement.Api;
+namespace NIHR.StudyManagement.API;
 
 public class Startup
 {
@@ -18,11 +18,11 @@ public class Startup
     {
         services.AddControllers();
 
-        var studyManagementApiConfigurationSection = Configuration.GetSection("StudyManagementApiConfiguration");
+        var studyManagementAPIConfigurationSection = Configuration.GetSection("StudyManagementAPIConfiguration");
 
-        var studyManagementApiConfiguration = studyManagementApiConfigurationSection.Get<StudyManagementApiConfiguration>() ?? throw new ArgumentNullException(nameof(StudyManagementApiConfiguration));
+        var studyManagementAPIConfiguration = studyManagementAPIConfigurationSection.Get<StudyManagementAPIConfigurationx>() ?? throw new ArgumentNullException(nameof(StudyManagementAPIConfigurationx));
 
-        services.Configure<StudyManagementApiConfiguration>(studyManagementApiConfigurationSection);
+        services.Configure<StudyManagementAPIConfigurationx>(studyManagementAPIConfigurationSection);
 
         services.AddAuthentication(options =>
         {
@@ -32,7 +32,7 @@ public class Startup
         .AddCookie()
         .AddJwtBearer(options =>
         {
-            options.Authority = studyManagementApiConfiguration.JwtTokenValidationConfiguration.Authority;
+            options.Authority = studyManagementAPIConfiguration.JwtTokenValidationConfiguration.Authority;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
@@ -42,9 +42,9 @@ public class Startup
             // If local settings have a configuration value to override jwt token validation, then add
             // some custom handlers to intercept jwt validation events. Note, this bypasses true authentication
             // and should only be used in a local development environment. Claims can be mocked from the same configuration setting
-            if(studyManagementApiConfiguration.JwtTokenValidationConfiguration.OverrideJwtTokenValidation)
+            if(studyManagementAPIConfiguration.JwtTokenValidationConfiguration.OverrideJwtTokenValidation)
             {
-                var events = ConfigureForLocalDevelopment(studyManagementApiConfiguration);
+                var events = ConfigureForLocalDevelopment(studyManagementAPIConfiguration);
 
                 if(events != null)
                 {
@@ -93,7 +93,7 @@ public class Startup
     /// </summary>
     /// <param name="studyManagementApiConfiguration"></param>
     /// <returns></returns>
-    private static JwtBearerEvents? ConfigureForLocalDevelopment(StudyManagementApiConfiguration studyManagementApiConfiguration)
+    private static JwtBearerEvents? ConfigureForLocalDevelopment(StudyManagementAPIConfigurationx studyManagementApiConfiguration)
     {
         if(studyManagementApiConfiguration == null
             || !studyManagementApiConfiguration.JwtTokenValidationConfiguration.OverrideJwtTokenValidation)
