@@ -20,9 +20,9 @@ public class Startup
 
         var studyManagementAPIConfigurationSection = Configuration.GetSection("StudyManagementAPIConfiguration");
 
-        var studyManagementAPIConfiguration = studyManagementAPIConfigurationSection.Get<StudyManagementAPIConfigurationx>() ?? throw new ArgumentNullException(nameof(StudyManagementAPIConfigurationx));
+        var studyManagementAPIConfiguration = studyManagementAPIConfigurationSection.Get<StudyManagementAPIConfiguration>() ?? throw new ArgumentNullException(nameof(StudyManagementAPIConfiguration));
 
-        services.Configure<StudyManagementAPIConfigurationx>(studyManagementAPIConfigurationSection);
+        services.Configure<StudyManagementAPIConfiguration>(studyManagementAPIConfigurationSection);
 
         services.AddAuthentication(options =>
         {
@@ -93,7 +93,7 @@ public class Startup
     /// </summary>
     /// <param name="studyManagementApiConfiguration"></param>
     /// <returns></returns>
-    private static JwtBearerEvents? ConfigureForLocalDevelopment(StudyManagementAPIConfigurationx studyManagementApiConfiguration)
+    private static JwtBearerEvents? ConfigureForLocalDevelopment(StudyManagementAPIConfiguration studyManagementApiConfiguration)
     {
         if(studyManagementApiConfiguration == null
             || !studyManagementApiConfiguration.JwtTokenValidationConfiguration.OverrideJwtTokenValidation)
