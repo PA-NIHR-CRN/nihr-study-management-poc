@@ -12,7 +12,6 @@
     "s3-prefix"     : "NIHR.StudyManagement.Api/",
     "template"      : "serverless.template",
     "template-parameters" : "",
-    "docker-host-build-output-dir" : "./bin/Release/lambda-publish",
-    "s3-bucket"                    : "nihrd-s3-dev-rddi",
-    "stack-name"                   : "nihrd-cloudformation-stack-sandbox-study-management"
+    "s3-bucket"           : "nihrd-s3-dev-rddi",
+    "stack-name"          : "nihrd-cloudformation-stack-sandbox-study-management"
 }

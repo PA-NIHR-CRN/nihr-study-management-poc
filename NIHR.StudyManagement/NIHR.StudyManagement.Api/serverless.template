@@ -10,26 +10,32 @@
             "Properties": {
                 "Description": "Study Management Api (Sandbox)",
                 "Name": "nihrd-api-gateway-sandbox-study-management",
-                "StageName": "sandbox"
+                "StageName": "sandbox",
+                "Tags":{
+                    "Environment":"sandbox",
+                    "Name":"nihrd-api-gateway-sandbox-study-management",
+                    "System":"rddi-study-management"
+                }
             },
             "Type": "AWS::Serverless::Api"
         },
         "StudyManagementLambda": {
           "Type": "AWS::Serverless::Function",
               "Properties": {
-                "PackageType": "Image",
+                "Handler":"NIHR.StudyManagement.API::NIHR.StudyManagement.API.LambdaEntryPoint::FunctionHandlerAsync",
                 "FunctionName": "nihrd-lambda-sandbox-study-management",
+                "Runtime": "dotnet6",
                 "Role": "arn:aws:iam::462580661309:role/service-role/nihrd-lambda-dev-rddi-cognito-pre-token-authorizer-role-9tzk20q8",
                 "Description": "NIHR Study Management (sandbox) lambda handling API Gateway events. ASP NET Core API",
-                "ImageConfig": {
-                  "Command": [
-                    "NIHR.StudyManagement.Api::NIHR.StudyManagement.Api.LambdaEntryPoint::FunctionHandlerAsync"
-                  ]
-                },
                 "ImageUri": "",
                 "MemorySize": 256,
                 "Timeout": 30,
                 "Policies": [],
+                "Tags":{
+                    "Environment":"sandbox",
+                    "Name":"nihrd-lambda-sandbox-study-management",
+                    "System":"rddi-study-management"
+                },
                 "Environment":{
                     "Variables":{
                         "StudyManagementApiConfiguration__JwtTokenValidationConfiguration__OverrideJwtTokenValidation":"false",

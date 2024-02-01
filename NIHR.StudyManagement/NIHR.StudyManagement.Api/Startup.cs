@@ -18,11 +18,15 @@ public class Startup
     {
         services.AddControllers();
 
-        var studyManagementAPIConfigurationSection = Configuration.GetSection("StudyManagementAPIConfiguration");
+        var studyManagementApiConfigurationSection = Configuration.GetSection("StudyManagementApi");
 
-        var studyManagementAPIConfiguration = studyManagementAPIConfigurationSection.Get<StudyManagementAPIConfiguration>() ?? throw new ArgumentNullException(nameof(StudyManagementAPIConfiguration));
+        var studyManagementApiSettings = studyManagementApiConfigurationSection.Get<StudyManagementApiSettings>() ?? throw new ArgumentNullException(nameof(StudyManagementApiSettings));
 
-        services.Configure<StudyManagementAPIConfiguration>(studyManagementAPIConfigurationSection);
+        services.Configure<StudyManagementApiSettings>(studyManagementApiConfigurationSection);
+
+        // DEBUG
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(studyManagementApiSettings));
+        // end debug
 
         services.AddAuthentication(options =>
         {
@@ -32,19 +36,20 @@ public class Startup
         .AddCookie()
         .AddJwtBearer(options =>
         {
-            options.Authority = studyManagementAPIConfiguration.JwtTokenValidationConfiguration.Authority;
+            options.Authority = studyManagementApiSettings.JwtBearer.Authority;
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuerSigningKey = true,
-                ValidateAudience = false
+                ValidateIssuerSigningKey = studyManagementApiSettings.JwtBearer.ValidateIssuerSigningKey,
+                ValidateAudience = studyManagementApiSettings.JwtBearer.ValidateAudience
             };
 
             // If local settings have a configuration value to override jwt token validation, then add
             // some custom handlers to intercept jwt validation events. Note, this bypasses true authentication
             // and should only be used in a local development environment. Claims can be mocked from the same configuration setting
-            if(studyManagementAPIConfiguration.JwtTokenValidationConfiguration.OverrideJwtTokenValidation)
+            if(studyManagementApiSettings.JwtBearer.JwtBearerOverrideSettings != null
+                && studyManagementApiSettings.JwtBearer.JwtBearerOverrideSettings.OverrideEvents)
             {
-                var events = ConfigureForLocalDevelopment(studyManagementAPIConfiguration);
+                var events = ConfigureForLocalDevelopment(studyManagementApiSettings);
 
                 if(events != null)
                 {
@@ -91,15 +96,15 @@ public class Startup
     /// for authentication.
     /// Configuration is controlled via appsettings values.
     /// </summary>
-    /// <param name="studyManagementApiConfiguration"></param>
+    /// <param name="studyManagementApiSettings"></param>
     /// <returns></returns>
-    private static JwtBearerEvents? ConfigureForLocalDevelopment(StudyManagementAPIConfiguration studyManagementApiConfiguration)
+    private static JwtBearerEvents? ConfigureForLocalDevelopment(StudyManagementApiSettings studyManagementApiSettings)
     {
-        if(studyManagementApiConfiguration == null
-            || !studyManagementApiConfiguration.JwtTokenValidationConfiguration.OverrideJwtTokenValidation)
+        if(studyManagementApiSettings.JwtBearer.JwtBearerOverrideSettings == null
+            || !studyManagementApiSettings.JwtBearer.JwtBearerOverrideSettings.OverrideEvents)
         {
             return null;
-        }
+        }    
 
         return new JwtBearerEvents()
         {
@@ -107,7 +112,7 @@ public class Startup
             {
                 var claims = new List<Claim>();
 
-                foreach (var claimConfig in studyManagementApiConfiguration.JwtTokenValidationConfiguration.OverrideClaimsConfigurations)
+                foreach (var claimConfig in studyManagementApiSettings.JwtBearer.JwtBearerOverrideSettings.ClaimsOverride)
                 {
                     claims.Add(new Claim(claimConfig.Name, claimConfig.Description));
                 }
