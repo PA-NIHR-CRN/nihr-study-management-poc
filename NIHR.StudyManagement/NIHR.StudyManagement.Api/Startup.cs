@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using NIHR.StudyManagement.API.Configuration;
+using NIHR.StudyManagement.Api.Configuration;
 using System.Security.Claims;
 
-namespace NIHR.StudyManagement.API;
+namespace NIHR.StudyManagement.Api;
 
 public class Startup
 {

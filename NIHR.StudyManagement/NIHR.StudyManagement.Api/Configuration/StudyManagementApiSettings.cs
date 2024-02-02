@@ -1,4 +1,4 @@
-﻿namespace NIHR.StudyManagement.API.Configuration
+﻿namespace NIHR.StudyManagement.Api.Configuration
 {
     public class StudyManagementApiSettings
     {

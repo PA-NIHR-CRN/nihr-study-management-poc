@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace NIHR.StudyManagement.API.Controllers
+namespace NIHR.StudyManagement.Api.Controllers
 {
     [Route("api/v1/[controller]")]
-    public class HomeController : ApiControllerBasex
+    public class HomeController : ApiControllerBase
     {
         [HttpGet]
         public IActionResult Welcome()

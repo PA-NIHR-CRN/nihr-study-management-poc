@@ -1,4 +1,4 @@
-namespace NIHR.StudyManagement.API;
+namespace NIHR.StudyManagement.Api;
 
 /// <summary>
 /// This class extends from APIGatewayProxyFunction which contains the method FunctionHandlerAsync which is the 
