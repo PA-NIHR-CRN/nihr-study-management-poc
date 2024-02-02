@@ -54,7 +54,7 @@
               "Home": {
                 "Type": "Api",
                 "Properties": {
-                  "Path": "/api/v1/Home",
+                  "Path": "/api/v1/home",
                   "Method": "GET",
                   "RestApiId": { "Ref" : "StudyManagementApi" }
                 }
@@ -62,7 +62,7 @@
               "HomeAuthenticated": {
                 "Type": "Api",
                 "Properties": {
-                  "Path": "/api/v1/Home/authenticated",
+                  "Path": "/api/v1/home/authenticated",
                   "Method": "GET",
                   "RestApiId": { "Ref" : "StudyManagementApi" }
                 }

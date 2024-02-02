@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace NIHR.StudyManagement.Api.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/home")]
     public class HomeController : ApiControllerBase
     {
         [HttpGet]
