@@ -38,8 +38,7 @@
                 },
                 "Environment":{
                     "Variables":{
-                        "StudyManagementApiConfiguration__JwtTokenValidationConfiguration__OverrideJwtTokenValidation":"false",
-                        "StudyManagementApiConfiguration__JwtTokenValidationConfiguration__Authority":"false"
+                        "StudyManagementApi__JwtBearer__Authority":"<required Oidc issuer value>"
                     }
                 },
             "Events": {
