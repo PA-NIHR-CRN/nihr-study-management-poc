@@ -46,8 +46,8 @@ public class Startup
             // If local settings have a configuration value to override jwt token validation, then add
             // some custom handlers to intercept jwt validation events. Note, this bypasses true authentication
             // and should only be used in a local development environment. Claims can be mocked from the same configuration setting
-            if(studyManagementApiSettings.JwtBearer.JwtBearerOverrideSettings != null
-                && studyManagementApiSettings.JwtBearer.JwtBearerOverrideSettings.OverrideEvents)
+            if(studyManagementApiSettings.JwtBearer.JwtBearerOverride != null
+                && studyManagementApiSettings.JwtBearer.JwtBearerOverride.OverrideEvents)
             {
                 var events = ConfigureForLocalDevelopment(studyManagementApiSettings);
 
@@ -100,8 +100,8 @@ public class Startup
     /// <returns></returns>
     private static JwtBearerEvents? ConfigureForLocalDevelopment(StudyManagementApiSettings studyManagementApiSettings)
     {
-        if(studyManagementApiSettings.JwtBearer.JwtBearerOverrideSettings == null
-            || !studyManagementApiSettings.JwtBearer.JwtBearerOverrideSettings.OverrideEvents)
+        if(studyManagementApiSettings.JwtBearer.JwtBearerOverride == null
+            || !studyManagementApiSettings.JwtBearer.JwtBearerOverride.OverrideEvents)
         {
             return null;
         }    
@@ -112,7 +112,7 @@ public class Startup
             {
                 var claims = new List<Claim>();
 
-                foreach (var claimConfig in studyManagementApiSettings.JwtBearer.JwtBearerOverrideSettings.ClaimsOverride)
+                foreach (var claimConfig in studyManagementApiSettings.JwtBearer.JwtBearerOverride.ClaimsOverride)
                 {
                     claims.Add(new Claim(claimConfig.Name, claimConfig.Description));
                 }

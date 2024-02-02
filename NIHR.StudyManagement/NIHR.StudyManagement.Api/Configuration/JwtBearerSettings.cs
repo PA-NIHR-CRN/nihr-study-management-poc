@@ -8,6 +8,6 @@
 
         public bool ValidateIssuerSigningKey { get; set; }
 
-        public JwtBearerOverrideSettings JwtBearerOverrideSettings { get; set; } = new JwtBearerOverrideSettings();
+        public JwtBearerOverrideSettings JwtBearerOverride { get; set; } = new JwtBearerOverrideSettings();
     }
 }
