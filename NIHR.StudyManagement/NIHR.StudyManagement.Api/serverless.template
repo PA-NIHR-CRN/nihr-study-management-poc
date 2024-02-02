@@ -22,7 +22,7 @@
         "StudyManagementLambda": {
           "Type": "AWS::Serverless::Function",
               "Properties": {
-                "Handler":"NIHR.StudyManagement.API::NIHR.StudyManagement.API.LambdaEntryPoint::FunctionHandlerAsync",
+                "Handler":"NIHR.StudyManagement.Api::NIHR.StudyManagement.Api.LambdaEntryPoint::FunctionHandlerAsync",
                 "FunctionName": "nihrd-lambda-sandbox-study-management",
                 "Runtime": "dotnet6",
                 "Role": "arn:aws:iam::462580661309:role/service-role/nihrd-lambda-dev-rddi-cognito-pre-token-authorizer-role-9tzk20q8",

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace NIHR.StudyManagement.API.Controllers
 {
     [Route("api/v1/[controller]")]
-    public class HomeController : APIControllerBase
+    public class HomeController : ApiControllerBasex
     {
         [HttpGet]
         public IActionResult Welcome()

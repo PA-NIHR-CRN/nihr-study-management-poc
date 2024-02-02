@@ -3,7 +3,7 @@
 namespace NIHR.StudyManagement.API.Controllers
 {
     [ApiController]
-    public abstract class APIControllerBase : ControllerBase
+    public abstract class ApiControllerBasex : ControllerBase
     {
         [Route("/error")]
         [ApiExplorerSettings(IgnoreApi = true)]
