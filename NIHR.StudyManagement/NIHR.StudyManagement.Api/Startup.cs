@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NIHR.StudyManagement.Api.Configuration;
 using System.Security.Claims;
@@ -7,9 +8,19 @@ namespace NIHR.StudyManagement.Api;
 
 public class Startup
 {
+    private readonly ILogger<Startup> _logger;
+
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
+
+        using var loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.SetMinimumLevel(LogLevel.Information);
+            builder.AddConsole();
+        });
+
+        _logger = loggerFactory.CreateLogger<Startup>();
     }
 
     public IConfiguration Configuration { get; }
@@ -18,15 +29,15 @@ public class Startup
     {
         services.AddControllers();
 
+        _logger.LogInformation("Configuring services..");
+
         var studyManagementApiConfigurationSection = Configuration.GetSection("StudyManagementApi");
 
         var studyManagementApiSettings = studyManagementApiConfigurationSection.Get<StudyManagementApiSettings>() ?? throw new ArgumentNullException(nameof(StudyManagementApiSettings));
 
         services.Configure<StudyManagementApiSettings>(studyManagementApiConfigurationSection);
 
-        // DEBUG
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(studyManagementApiSettings));
-        // end debug
+        _logger.LogDebug($"Application settings: {System.Text.Json.JsonSerializer.Serialize(studyManagementApiSettings)}");
 
         services.AddAuthentication(options =>
         {
@@ -65,10 +76,12 @@ public class Startup
         services.AddSwaggerGen();
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<StudyManagementApiSettings> studyManagementApiSettings)
     {
         if (env.IsDevelopment())
         {
+            _logger.LogInformation("Environment is development, initialisating Swagger endpoints.");
+
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI(options =>
@@ -76,6 +89,13 @@ public class Startup
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 options.RoutePrefix = string.Empty;
             });
+        }
+
+        // Log an error if Jwt Bearer token validation is set to override and the environment is Production.
+        if(env.IsProduction()
+            && studyManagementApiSettings.Value.JwtBearer.JwtBearerOverride.OverrideEvents)
+        {
+            _logger.LogError("Error: Jwt Bearer Override should not be used in Production environment.");
         }
 
         app.UseHttpsRedirection();
