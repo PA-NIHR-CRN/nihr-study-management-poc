@@ -124,8 +124,7 @@ public class Startup
         }
 
         // Log an error if Jwt Bearer token validation is set to override and the environment is Production.
-        if (_webHostEnvironment.IsProduction()
-            && studyManagementApiSettings.JwtBearer.JwtBearerOverride.OverrideEvents)
+        if (_webHostEnvironment.IsProduction())
         {
             _logger.LogError("Error: Jwt Bearer Override should not be used in Production environment. Ignoring Jwt Bearer Override.");
 
