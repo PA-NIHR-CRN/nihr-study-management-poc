@@ -12,6 +12,11 @@
         /// Gets or sets a collection of claims that when OverrideEvents is true, then the claims from this
         /// collection will be added to the forced authenticated identity.
         /// </summary>
-        public List<OverrideClaimsSetting> ClaimsOverride { get; set; } = new List<OverrideClaimsSetting>();
+        public List<OverrideClaimsSetting> ClaimsOverride { get; set; }
+
+        public JwtBearerOverrideSettings()
+        {
+            ClaimsOverride = new List<OverrideClaimsSetting>();
+        }
     }
 }
