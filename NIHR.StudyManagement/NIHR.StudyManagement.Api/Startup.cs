@@ -35,7 +35,7 @@ public class Startup
 
         var studyManagementApiSettings = studyManagementApiConfigurationSection.Get<StudyManagementApiSettings>() ?? throw new ArgumentNullException(nameof(StudyManagementApiSettings));
 
-        services.Configure<StudyManagementApiSettings>(studyManagementApiConfigurationSection);
+        services.AddOptions<StudyManagementApiSettings>().Bind(studyManagementApiConfigurationSection);
 
         _logger.LogDebug($"Application settings: {System.Text.Json.JsonSerializer.Serialize(studyManagementApiSettings)}");
 
