@@ -9,8 +9,10 @@ namespace NIHR.StudyManagement.Api;
 public class Startup
 {
     private readonly ILogger<Startup> _logger;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
-    public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration,
+        IWebHostEnvironment webHostEnvironment)
     {
         Configuration = configuration;
 
@@ -21,6 +23,8 @@ public class Startup
         });
 
         _logger = loggerFactory.CreateLogger<Startup>();
+
+        _webHostEnvironment = webHostEnvironment;
     }
 
     public IConfiguration Configuration { get; }
@@ -91,13 +95,6 @@ public class Startup
             });
         }
 
-        // Log an error if Jwt Bearer token validation is set to override and the environment is Production.
-        if(env.IsProduction()
-            && studyManagementApiSettings.Value.JwtBearer.JwtBearerOverride.OverrideEvents)
-        {
-            _logger.LogError("Error: Jwt Bearer Override should not be used in Production environment.");
-        }
-
         app.UseHttpsRedirection();
 
         app.UseRouting();
@@ -118,13 +115,22 @@ public class Startup
     /// </summary>
     /// <param name="studyManagementApiSettings"></param>
     /// <returns></returns>
-    private static JwtBearerEvents? ConfigureForLocalDevelopment(StudyManagementApiSettings studyManagementApiSettings)
+    private JwtBearerEvents? ConfigureForLocalDevelopment(StudyManagementApiSettings studyManagementApiSettings)
     {
         if(studyManagementApiSettings.JwtBearer.JwtBearerOverride == null
             || !studyManagementApiSettings.JwtBearer.JwtBearerOverride.OverrideEvents)
         {
             return null;
-        }    
+        }
+
+        // Log an error if Jwt Bearer token validation is set to override and the environment is Production.
+        if (_webHostEnvironment.IsProduction()
+            && studyManagementApiSettings.JwtBearer.JwtBearerOverride.OverrideEvents)
+        {
+            _logger.LogError("Error: Jwt Bearer Override should not be used in Production environment. Ignoring Jwt Bearer Override.");
+
+            return null;
+        }
 
         return new JwtBearerEvents()
         {
