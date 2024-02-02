@@ -33,7 +33,7 @@ public class Startup
 
         var studyManagementApiConfigurationSection = Configuration.GetSection("StudyManagementApi");
 
-        var studyManagementApiSettings = studyManagementApiConfigurationSection.Get<StudyManagementApiSettings>() ?? throw new ArgumentNullException(nameof(StudyManagementApiSettings));
+        var studyManagementApiSettings = studyManagementApiConfigurationSection.Get<StudyManagementApiSettings>();
 
         services.AddOptions<StudyManagementApiSettings>().Bind(studyManagementApiConfigurationSection);
 
