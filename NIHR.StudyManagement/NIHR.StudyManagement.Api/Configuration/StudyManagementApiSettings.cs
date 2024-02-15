@@ -3,10 +3,17 @@
     public class StudyManagementApiSettings
     {
         public JwtBearerSettings JwtBearer { get; set; }
+        public DatabaseSettings Data { get; set; }
 
         public StudyManagementApiSettings()
         {
             JwtBearer = new JwtBearerSettings();
+            Data = new DatabaseSettings();
         }
+    }
+
+    public class DatabaseSettings
+    {
+        public string ConnectionString { get; set; } = $"";
     }
 }
