@@ -6,6 +6,7 @@ namespace NIHR.StudyManagement.Domain.Abstractions
     {
         Task<GovernmentResearchIdentifier> RegisterStudy(RegisterStudyRequest request);
 
+        Task<GovernmentResearchIdentifier> RegisterStudy(RegisterStudyToExistingIdentifierRequest request);
 
         Task<GovernmentResearchIdentifier> GetAsync(string identifier);
     }

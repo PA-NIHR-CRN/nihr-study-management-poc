@@ -6,6 +6,8 @@
 
         public string RoleName { get; set; }
 
+        public string Identifier { get; set; }
+
         public DateTime EffectiveFrom { get; set; }
 
         public DateTime? EffectiveTo { get; set; }
@@ -23,6 +25,11 @@
     {
     }
 
+    public class RegisterStudyToExistingIdentifierRequest : RegisterStudyRequest
+    {
+        public string Identifier { get; set; } = "";
+    }
+
     public class RegisterStudyRequest
     {
         public string ProjectId { get; set; }
@@ -32,8 +39,6 @@
         public string ShortTitle { get; set; }
 
         public string Sponsor { get; set; }
-
-        public string? Identifier { get; set; }
 
         public string ProtocolId { get; set; }
 

@@ -25,16 +25,17 @@ namespace NIHR.StudyManagement.Domain.Services
 
         public async Task<GovernmentResearchIdentifier> RegisterStudy(RegisterStudyRequest request)
         {
-            // Check if request has specified an existing identifier
-            if(!string.IsNullOrEmpty(request.Identifier))
-            {
-                return await AddNewStudyToExistingIdentifierAsync(request);
-            }
-
             return await RegisterNewStudyWithNewIdentifierAsync(request);
         }
 
-        private async Task<GovernmentResearchIdentifier> AddNewStudyToExistingIdentifierAsync(RegisterStudyRequest request)
+        public async Task<GovernmentResearchIdentifier> RegisterStudy(RegisterStudyToExistingIdentifierRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Identifier)) throw new ArgumentNullException(nameof(request.Identifier));
+
+            return await AddNewStudyToExistingIdentifierAsync(request);
+        }
+
+        private async Task<GovernmentResearchIdentifier> AddNewStudyToExistingIdentifierAsync(RegisterStudyToExistingIdentifierRequest request)
         {
             if (request == null || string.IsNullOrEmpty(request.Identifier)) throw new ArgumentNullException(nameof(request));
 
@@ -70,13 +71,13 @@ namespace NIHR.StudyManagement.Domain.Services
             return await _governmentResearchIdentifierRepository.AddStudyToIdentifierAsync(domainRequest);
         }
 
-        private RegisterStudyRequestWithContext Map(RegisterStudyRequest request)
+        private RegisterStudyRequestWithContext Map(RegisterStudyRequest request, string identifier)
         {
             return new RegisterStudyRequestWithContext
             {
                 ChiefInvestigator = request.ChiefInvestigator,
                 ProjectId = request.ProjectId,
-                Identifier = request.Identifier,
+                Identifier = identifier,
                 Sponsor = request.Sponsor,
                 ShortTitle = request.ShortTitle,
                 LocalSystemName = _settings.DefaultLocalSystemName,
@@ -90,9 +91,7 @@ namespace NIHR.StudyManagement.Domain.Services
             // Generate the GRI
             var gri = GenerateGrisPostcode();
 
-            var domainRequest =  Map(request);
-
-            domainRequest.Identifier = gri;
+            var domainRequest =  Map(request, gri);
 
             return await _governmentResearchIdentifierRepository.CreateAsync(domainRequest);
         }

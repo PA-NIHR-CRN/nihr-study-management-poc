@@ -7,7 +7,7 @@ namespace NIHR.StudyManagement.Api.Mappers
     {
         RegisterStudyRequest Map(RegisterStudyRequestDto requestDto);
 
-        RegisterStudyRequest Map(RegisterStudyRequestDto requestDto, string identifier);
+        RegisterStudyToExistingIdentifierRequest Map(RegisterStudyRequestDto requestDto, string identifier);
 
         GovernmentResearchIdentifierDto Map(GovernmentResearchIdentifier governmentResearchIdentifier);
     }

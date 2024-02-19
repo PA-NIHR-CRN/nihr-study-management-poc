@@ -7,11 +7,23 @@ namespace NIHR.StudyManagement.Api.Mappers
 {
     public class GovernmentResearchIdentifierDtoMapper : IGovernmentResearchIdentifierDtoMapper
     {
-        public RegisterStudyRequest Map(RegisterStudyRequestDto requestDto, string identifier)
+        public RegisterStudyToExistingIdentifierRequest Map(RegisterStudyRequestDto requestDto, string identifier)
         {
-            var createIdentifierRequest = Map(requestDto);
+            var chiefInvestigatorPerson = requestDto.TeamMembers.First();
 
-            createIdentifierRequest.Identifier = identifier;
+            var createIdentifierRequest = new RegisterStudyToExistingIdentifierRequest()
+            {
+                ShortTitle = requestDto.LocalStudy.ShortTitle,
+                ProjectId = requestDto.LocalStudy.ProjectId,
+                ProtocolId = requestDto.ProtocolId,
+                Identifier = identifier,
+                ChiefInvestigator = new PersonWithPrimaryEmail
+                {
+                    Email = new Email { Address = chiefInvestigatorPerson.PrimaryEmail },
+                    Firstname = chiefInvestigatorPerson.Firstname,
+                    Lastname = chiefInvestigatorPerson.Lastname
+                }
+            };
 
             return createIdentifierRequest;
         }
