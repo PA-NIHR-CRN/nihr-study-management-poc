@@ -11,9 +11,4 @@
             Data = new DatabaseSettings();
         }
     }
-
-    public class DatabaseSettings
-    {
-        public string ConnectionString { get; set; } = $"";
-    }
 }
