@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using NIHR.StudyManagement.Infrastructure.Repository.EnumsAndConstants;
 
 namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
 {
@@ -34,7 +35,6 @@ namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
         {
             if (!optionsBuilder.IsConfigured)
             {
-
             }
         }
 
@@ -181,6 +181,14 @@ namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
                 entity.Property(e => e.Type)
                     .HasMaxLength(45)
                     .HasColumnName("type");
+
+                entity.HasData(
+                    new PersonRole
+                    {
+                        Id = 1,
+                        Description = "A Chief investigator role",
+                        Type = Repository.EnumsAndConstants.PersonRoles.ChiefInvestigator,
+                    });
             });
 
             modelBuilder.Entity<PersonType>(entity =>
@@ -194,6 +202,13 @@ namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
                 entity.Property(e => e.Description)
                     .HasMaxLength(45)
                     .HasColumnName("description");
+
+                entity.HasData(
+                    new PersonType
+                    {
+                        Id = 1,
+                        Description = Repository.EnumsAndConstants.PersonTypes.Researcher
+                    });
             });
 
             modelBuilder.Entity<ResearchInitiative>(entity =>
@@ -261,6 +276,11 @@ namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
                 entity.Property(e => e.Description)
                     .HasMaxLength(45)
                     .HasColumnName("description");
+
+                entity.HasData(
+                    new ResearchInitiativeIdentifierType { Id = 1, Description = Repository.EnumsAndConstants.ResearchInitiativeIdentifierTypes.Project },
+                    new ResearchInitiativeIdentifierType { Id = 2, Description = Repository.EnumsAndConstants.ResearchInitiativeIdentifierTypes.Protocol }
+                    );
             });
 
             modelBuilder.Entity<ResearchInitiativeType>(entity =>
@@ -274,6 +294,8 @@ namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
                 entity.Property(e => e.Description)
                     .HasMaxLength(45)
                     .HasColumnName("description");
+
+                entity.HasData(new ResearchInitiativeType { Id = 1, Description = Repository.EnumsAndConstants.ResearchInitiativeTypes.Study });
             });
 
             modelBuilder.Entity<ResearchStudyTeamMember>(entity =>
@@ -353,6 +375,11 @@ namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
                 entity.Property(e => e.Description)
                     .HasMaxLength(45)
                     .HasColumnName("description");
+
+                entity.HasData(
+                    new SourceSystem { Id = 1, Code = SourceSystemNames.Edge, Description = "Edge system" },
+                    new SourceSystem { Id = 2, Code = SourceSystemNames.Iras, Description = "IRAS system" }
+                    );
             });
 
             OnModelCreatingPartial(modelBuilder);

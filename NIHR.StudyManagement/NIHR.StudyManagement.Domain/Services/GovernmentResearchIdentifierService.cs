@@ -51,7 +51,17 @@ namespace NIHR.StudyManagement.Domain.Services
                 throw new GriAlreadyExistsException($"A local system identifier already exists for GRI '{request.Identifier}' and '{_settings.DefaultLocalSystemName}'");
             }
 
-            var domainRequest = Map(request) as AddStudyToExistingIdentifierRequestWithContext;
+            var domainRequest = new AddStudyToExistingIdentifierRequestWithContext
+            {
+                ChiefInvestigator = request.ChiefInvestigator,
+                ProjectId = request.ProjectId,
+                Identifier = request.Identifier,
+                Sponsor = request.Sponsor,
+                ShortTitle = request.ShortTitle,
+                LocalSystemName = _settings.DefaultLocalSystemName,
+                RoleName = _settings.DefaultRoleName,
+                ProtocolId = request.ProtocolId
+            };
 
             return await _governmentResearchIdentifierRepository.AddStudyToIdentifierAsync(domainRequest);
         }
