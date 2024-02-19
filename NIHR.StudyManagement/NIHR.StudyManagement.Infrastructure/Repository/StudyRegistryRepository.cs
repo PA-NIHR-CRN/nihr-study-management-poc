@@ -108,7 +108,7 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
 
             await _context.SaveChangesAsync();
 
-            return await GetAsync(request.Identifier);
+            return await GetAsync(researchStudy.Gri);
         }
 
         private async Task<SourceSystem?> GetSourceSystem(string code)
@@ -178,7 +178,7 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
 
             await _context.SaveChangesAsync();
 
-            return await GetAsync(request.Identifier);
+            return await GetAsync(griResearchStudy.Gri);
         }
 
         public async Task<GovernmentResearchIdentifier> GetAsync(string identifier)
@@ -216,8 +216,13 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
                 {
                     Role = new Role
                     {
-                        Description = teamMember.PersonRole.Description,
-                        Name = teamMember.PersonRole.Type
+                        Description = teamMember.PersonRole != null
+                            && !string.IsNullOrEmpty(teamMember.PersonRole.Description)
+                            ? teamMember.PersonRole.Description : "",
+                        Name = teamMember.PersonRole != null
+                            && !string.IsNullOrEmpty( teamMember.PersonRole.Type)
+                            ? teamMember.PersonRole.Type
+                            : ""
                     },
                     Person = new PersonWithPrimaryEmail
                     {

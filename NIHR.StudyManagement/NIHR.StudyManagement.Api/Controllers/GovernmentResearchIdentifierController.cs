@@ -48,10 +48,11 @@ namespace NIHR.StudyManagement.Api.Controllers
         /// This operation registers the given study with an existing GRI identifier.
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="identifier"></param>
         [ProducesResponseType(typeof(GovernmentResearchIdentifierDto), StatusCodes.Status201Created)]
         [HttpPatch]
         [Route("{identifier}")]
-        public async Task<IActionResult> RegisterStudyToExistingIdentifier(RegisterStudyRequestDto request,string identifier)
+        public async Task<IActionResult> RegisterStudyToExistingIdentifier(RegisterStudyRequestDto request, string identifier)
         {
             var createIdentifierRequest = _dtoMapper.Map(request, identifier);
 
