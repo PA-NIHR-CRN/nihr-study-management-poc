@@ -111,16 +111,6 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
             return await GetAsync(researchStudy.Gri);
         }
 
-        private async Task<SourceSystem?> GetSourceSystem(string code)
-        {
-            return await _context.SourceSystems.FirstOrDefaultAsync(system => system.Code == code);
-        }
-
-        private async Task<ResearchInitiativeType?> GetResearchInitiativeType(string code)
-        {
-            return await _context.ResearchInitiativeTypes.FirstOrDefaultAsync(x => x.Description == code);
-        }
-
         public async Task<GovernmentResearchIdentifier> AddStudyToIdentifierAsync(AddStudyToExistingIdentifierRequestWithContext request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
@@ -129,11 +119,11 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
 
             var studyType = await GetResearchInitiativeType(ResearchInitiativeTypes.Study) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeType));
 
-            var sourceSystem = await GetSourceSystem(SourceSystemNames.Edge) ?? throw new EntityNotFoundException(nameof(SourceSystem));
+            var sourceSystem = await GetSourceSystem(request.LocalSystemName) ?? throw new EntityNotFoundException(nameof(SourceSystem));
 
             var personTypeResearcher = _context.PersonTypes.FirstOrDefault(x => x.Description == PersonTypes.Researcher) ?? throw new EntityNotFoundException(nameof(PersonType));
 
-            var personRoleCI = _context.PersonRoles.FirstOrDefault(x => x.Type == PersonRoles.ChiefInvestigator) ?? throw new EntityNotFoundException(nameof(PersonRole));
+            var personRoleCI = _context.PersonRoles.FirstOrDefault(x => x.Type == request.RoleName) ?? throw new EntityNotFoundException(nameof(PersonRole));
 
             var projectResearchInitiativeIdentifierType = await _context.ResearchInitiativeIdentifierTypes
                 .FirstOrDefaultAsync(x => x.Description == ResearchInitiativeIdentifierTypes.Project) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeIdentifierType));
@@ -267,6 +257,17 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
                 && personName.Email == person.Email.Address);
 
             return personFromDb?.Person;
+        }
+
+
+        private async Task<SourceSystem?> GetSourceSystem(string code)
+        {
+            return await _context.SourceSystems.FirstOrDefaultAsync(system => system.Code == code);
+        }
+
+        private async Task<ResearchInitiativeType?> GetResearchInitiativeType(string code)
+        {
+            return await _context.ResearchInitiativeTypes.FirstOrDefaultAsync(x => x.Description == code);
         }
     }
 }

@@ -17,6 +17,10 @@ namespace NIHR.StudyManagement.Domain.Services
         {
             this._governmentResearchIdentifierRepository = governmentResearchIdentifierRepository;
             this._settings = settings.Value;
+
+            if (string.IsNullOrEmpty(this._settings.DefaultRoleName)) throw new ArgumentNullException(nameof(_settings.DefaultRoleName));
+
+            if (string.IsNullOrEmpty(this._settings.DefaultLocalSystemName)) throw new ArgumentNullException(nameof(_settings.DefaultLocalSystemName));
         }
 
         public async Task<GovernmentResearchIdentifier> RegisterStudy(RegisterStudyRequest request)
