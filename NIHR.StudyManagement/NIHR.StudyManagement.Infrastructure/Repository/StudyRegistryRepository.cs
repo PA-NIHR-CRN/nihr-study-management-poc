@@ -1,17 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Mysqlx.Expr;
 using NIHR.StudyManagement.Domain.Abstractions;
 using NIHR.StudyManagement.Domain.Configuration;
+using NIHR.StudyManagement.Domain.Exceptions;
 using NIHR.StudyManagement.Domain.Models;
-using NIHR.StudyManagement.Infrastructure.Repository.Models.StudyRegistryContext;
+using NIHR.StudyManagement.Infrastructure.Repository.EnumsAndConstants;
+using NIHR.StudyManagement.Infrastructure.Repository.Models;
 using System;
 
-/*
- * 
- * dotnet ef migrations add InitialDb --startup-project ..\NIHR.StudyManagement.Api\ --context StudyRegistryContext
- * dotnet ef database update --context StudyRegistryContext
- * 
- * */
+using PersonDb = NIHR.StudyManagement.Infrastructure.Repository.Models.Person;
 
 namespace NIHR.StudyManagement.Infrastructure.Repository
 {
@@ -31,89 +29,152 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
                 throw new ArgumentNullException(nameof(request));
             };
 
-            var researcherRole = await GetRoleAsync(request.RoleName) ?? throw new ArgumentNullException($"Researcher role {request.RoleName} not found in database.");
+            var studyType = await GetResearchInitiativeType(ResearchInitiativeTypes.Study) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeType));
 
-            var localSystem = await GetLocalSystemAsync(request.LocalSystemName) ?? throw new ArgumentNullException($"Local system {request.LocalSystemName} not found in database.");
+            var sourceSystem = await GetSourceSystem(SourceSystemNames.Edge) ?? throw new EntityNotFoundException(nameof(SourceSystem));
+
+            var personTypeResearcher = _context.PersonTypes.FirstOrDefault(x => x.Description == PersonTypes.Researcher) ?? throw new EntityNotFoundException(nameof(PersonType));
+
+            var personRoleCI = _context.PersonRoles.FirstOrDefault(x => x.Type == PersonRoles.ChiefInvestigator) ?? throw new EntityNotFoundException(nameof(PersonRole));
+
+            var projectResearchInitiativeIdentifierType = await _context.ResearchInitiativeIdentifierTypes
+                .FirstOrDefaultAsync(x => x.Description == ResearchInitiativeIdentifierTypes.Project) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeIdentifierType));
+
+            var protocolResearchInitiativeIdentifierType = await _context.ResearchInitiativeIdentifierTypes
+                .FirstOrDefaultAsync(x => x.Description == ResearchInitiativeIdentifierTypes.Protocol) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeIdentifierType));
+
+            var researchInitiative = new ResearchInitiative
+            {
+                ResearchInitiativeType = studyType,
+            };
+
+            var researchStudy = new GriResearchStudy
+            {
+                ResearchInitiative = researchInitiative,
+                ShortTitle = request.ShortTitle,
+                Gri = request.Identifier ?? "",
+                RequestSourceSystem = sourceSystem
+            };
+
+            var griMapping = new GriMapping
+            {
+                 GriResearchStudy = researchStudy,
+                 ResearchInitiativeIdentifier = new ResearchInitiativeIdentifier
+                 {
+                     SourceSystem = sourceSystem,
+                     Value = request.ProjectId,
+                     ResearchInitiativeIdentifierType = projectResearchInitiativeIdentifierType
+                 },
+                 SourceSystem = sourceSystem
+            };
+
+            var griMappingForProtocol = new GriMapping
+            {
+                GriResearchStudy = researchStudy,
+                ResearchInitiativeIdentifier = new ResearchInitiativeIdentifier
+                {
+                    SourceSystem = sourceSystem,
+                    Value = request.ProtocolId,
+                    ResearchInitiativeIdentifierType = protocolResearchInitiativeIdentifierType
+                },
+                SourceSystem = sourceSystem
+            };
 
             var chiefInvestigator = await GetPersonAsync(request.ChiefInvestigator) ?? new PersonDb
-                {
-                    Firstname = request.ChiefInvestigator.Firstname,
-                    Lastname = request.ChiefInvestigator.Lastname,
-                    PrimaryEmail = request?.ChiefInvestigator?.Email?.Address ?? ""
-                };
-
-            var team = new ResearchInitiativeTeamMemberDb
             {
-                Person = chiefInvestigator,
-                Role = researcherRole,
-                EffectiveFrom = request.EffectiveFrom,
-                EffectiveTo = request.EffectiveTo
+                PersonNames = new PersonName[] { new PersonName {
+                        Given =request.ChiefInvestigator.Firstname,
+                        Family = request.ChiefInvestigator.Lastname,
+                        Email = request.ChiefInvestigator.Email.Address
+                    } },
+                PersonType = personTypeResearcher
             };
 
-            var researchInitiative = new ResearchInitiativeDb
+            var teamMember = new ResearchStudyTeamMember
             {
-                Identifier = request.Identifier,
-                Name = request.ShortTitle,
-                ProtocolId = request.ProtocolId,
-                ResearchInitiativeTeams = new[] { team },
-                LocalSystemLinkedIdentifiers = new SourceSystemLinkedIdentifierDb[]
+                GriMapping = researchStudy,
+                Researcher = new Researcher
                 {
-                        new SourceSystemLinkedIdentifierDb
-                        {
-                            LocalSystemIdentifier = request.ProjectId,
-                            LocalSystems = localSystem
-                        }
-                }
+                    Person = chiefInvestigator
+                },
+                PersonRole = personRoleCI
             };
 
-            _context.ResearchInitiatives.Add(researchInitiative);
+            await _context.AddAsync(griMappingForProtocol);
+
+            await _context.AddAsync(griMapping);
+
+            await _context.AddAsync(teamMember);
 
             await _context.SaveChangesAsync();
 
             return await GetAsync(request.Identifier);
         }
 
+        private async Task<SourceSystem?> GetSourceSystem(string code)
+        {
+            return await _context.SourceSystems.FirstOrDefaultAsync(system => system.Code == code);
+        }
+
+        private async Task<ResearchInitiativeType?> GetResearchInitiativeType(string code)
+        {
+            return await _context.ResearchInitiativeTypes.FirstOrDefaultAsync(x => x.Description == code);
+        }
+
         public async Task<GovernmentResearchIdentifier> AddStudyToIdentifierAsync(AddStudyToExistingIdentifierRequestWithContext request)
         {
-            if (request == null)
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            var griResearchStudy = await GetGriResearchStudyByIdentifierAsync(request.Identifier) ?? throw new GriNotFoundException();
+
+            var studyType = await GetResearchInitiativeType(ResearchInitiativeTypes.Study) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeType));
+
+            var sourceSystem = await GetSourceSystem(SourceSystemNames.Edge) ?? throw new EntityNotFoundException(nameof(SourceSystem));
+
+            var personTypeResearcher = _context.PersonTypes.FirstOrDefault(x => x.Description == PersonTypes.Researcher) ?? throw new EntityNotFoundException(nameof(PersonType));
+
+            var personRoleCI = _context.PersonRoles.FirstOrDefault(x => x.Type == PersonRoles.ChiefInvestigator) ?? throw new EntityNotFoundException(nameof(PersonRole));
+
+            var projectResearchInitiativeIdentifierType = await _context.ResearchInitiativeIdentifierTypes
+                .FirstOrDefaultAsync(x => x.Description == ResearchInitiativeIdentifierTypes.Project) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeIdentifierType));
+
+            var protocolResearchInitiativeIdentifierType = await _context.ResearchInitiativeIdentifierTypes
+                .FirstOrDefaultAsync(x => x.Description == ResearchInitiativeIdentifierTypes.Protocol) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeIdentifierType));
+
+            var griMapping = new GriMapping
             {
-                throw new ArgumentNullException(nameof(request));
+                GriResearchStudy = griResearchStudy,
+                ResearchInitiativeIdentifier = new ResearchInitiativeIdentifier
+                {
+                    SourceSystem = sourceSystem,
+                    Value = request.ProjectId,
+                    ResearchInitiativeIdentifierType = projectResearchInitiativeIdentifierType
+                },
+                SourceSystem = sourceSystem
             };
-
-            var existingIdentifier = await GetResearchInitiative(request.Identifier);
-
-            if (existingIdentifier == null)
-            {
-                throw new FileNotFoundException($"No identifier found matching '{request.Identifier}'");
-            }
-
-            var researcherRole = await GetRoleAsync(request.RoleName) ?? throw new ArgumentNullException($"Researcher role {request.RoleName} not found in database.");
-
-            var localSystem = await GetLocalSystemAsync(request.LocalSystemName) ?? throw new ArgumentNullException($"Local system {request.LocalSystemName} not found in database.");
 
             var chiefInvestigator = await GetPersonAsync(request.ChiefInvestigator) ?? new PersonDb
             {
-                Firstname = request.ChiefInvestigator.Firstname,
-                Lastname = request.ChiefInvestigator.Lastname,
-                PrimaryEmail = request?.ChiefInvestigator?.Email?.Address ?? ""
+                PersonNames = new PersonName[] { new PersonName {
+                        Given = request.ChiefInvestigator.Firstname,
+                        Family = request.ChiefInvestigator.Lastname,
+                        Email = request.ChiefInvestigator.Email.Address
+                    } },
+                PersonType = personTypeResearcher
             };
 
-            var chiefInvestigatorTeamMember = new ResearchInitiativeTeamMemberDb
+            var teamMember = new ResearchStudyTeamMember
             {
-                Person = chiefInvestigator,
-                Role = researcherRole,
-                EffectiveFrom = request.EffectiveFrom,
-                EffectiveTo = request.EffectiveTo
+                GriMapping = griResearchStudy,
+                Researcher = new Researcher
+                {
+                    Person = chiefInvestigator
+                },
+                PersonRole = personRoleCI
             };
 
-            var linkedSystemIdentifier = new SourceSystemLinkedIdentifierDb
-            {
-                LocalSystemIdentifier = request.ProjectId,
-                LocalSystems = localSystem
-            };
-
-            existingIdentifier.ResearchInitiativeTeams.Add(chiefInvestigatorTeamMember);
-            existingIdentifier.LocalSystemLinkedIdentifiers.Add(linkedSystemIdentifier);
+            await _context.AddAsync(teamMember);
+            await _context.AddAsync(griMapping);
 
             await _context.SaveChangesAsync();
 
@@ -122,103 +183,85 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
 
         public async Task<GovernmentResearchIdentifier> GetAsync(string identifier)
         {
-            var identifierDb = await GetResearchInitiative(identifier);
+            var griResearchStudy = await GetGriResearchStudyByIdentifierAsync(identifier) ?? throw new GriNotFoundException();
 
-            if(identifierDb == null)
+            var linkedSystemIdentifiers = new List<LinkedSystemIdentifier>();
+
+            foreach (var x in griResearchStudy.GriMappings)
             {
-                return null;
+                linkedSystemIdentifiers.Add(new LinkedSystemIdentifier {
+                    CreatedAt = x.Created,
+                    SystemName = x.SourceSystem.Description,
+                    Identifier = x.ResearchInitiativeIdentifier.Value
+                });
             }
 
-            var mappedIdentifier = Map(identifierDb);
+            return new GovernmentResearchIdentifier {
+                Created = griResearchStudy.Created,
+                LinkedSystemIdentifiers = linkedSystemIdentifiers,
+                Identifier = identifier,
+                ShortTitle = griResearchStudy.ShortTitle,
 
-            return mappedIdentifier;
+                TeamMembers = Map(griResearchStudy.ResearchStudyTeamMembers)
+            };
         }
 
-        private async Task<SourceSystemDb?> GetLocalSystemAsync(string code)
+        private List<TeamMember> Map(ICollection<ResearchStudyTeamMember> researchStudyTeamMembers)
         {
-            return await _context.SourceSystems.FirstOrDefaultAsync(system => system.Name == code);
+            var teamMembers = new List<TeamMember>();
+
+            foreach (var teamMember in researchStudyTeamMembers)
+            {
+                teamMembers.Add(new TeamMember
+                {
+                    Role = new Role
+                    {
+                        Description = teamMember.PersonRole.Description,
+                        Name = teamMember.PersonRole.Type
+                    },
+                    Person = new PersonWithPrimaryEmail
+                    {
+                        Email = new Email
+                        {
+                            Address = teamMember.Researcher.Person.PersonNames.First().Email
+                        },
+                        Firstname = teamMember.Researcher.Person.PersonNames.First().Given,
+                        Lastname = teamMember.Researcher.Person.PersonNames.First().Family
+                    }
+                });
+            }
+
+            return teamMembers;
         }
 
-        private async Task<PersonDb?> GetPersonAsync(Domain.Models.Person person)
+        private async Task<GriResearchStudy?> GetGriResearchStudyByIdentifierAsync(string? identifier)
+        {
+            var griResearchStudy = await _context.GriResearchStudies
+                .Include(context => context.ResearchStudyTeamMembers)
+                    .ThenInclude(x => x.Researcher)
+                    .ThenInclude(researcher => researcher.Person)
+                    .ThenInclude(person => person.PersonNames)
+                 .Include(context => context.ResearchStudyTeamMembers).ThenInclude(x => x.PersonRole)
+                 .Include(study => study.GriMappings).ThenInclude(mapping => mapping.SourceSystem)
+                 .Include(study => study.GriMappings).ThenInclude(mapping => mapping.ResearchInitiativeIdentifier)
+                .FirstOrDefaultAsync(x => x.Gri == identifier);
+
+            return griResearchStudy;
+        }
+
+        private async Task<PersonDb?> GetPersonAsync(PersonWithPrimaryEmail person)
         {
             if (person == null)
             {
                 return null;
             }
 
-            return await _context.People.FirstOrDefaultAsync(dbPerson => dbPerson.Firstname == person.Firstname
-                && dbPerson.Lastname == person.Lastname);
-        }
+            var personFromDb = await _context.PersonNames.Include(personName => personName.Person)
+                .FirstOrDefaultAsync(personName => personName.Given == person.Firstname
+                && personName.Family == person.Lastname
+                && personName.Email == person.Email.Address);
 
-        private async Task<ResearchInitiativeDb?> GetResearchInitiative(string identifier)
-        {
-            var identifierDb = await _context.ResearchInitiatives
-                .Include(study => study.ResearchInitiativeTeams).ThenInclude(team => team.Role)
-                .Include(study => study.ResearchInitiativeTeams).ThenInclude(team => team.Person)
-                .Include(study => study.LocalSystemLinkedIdentifiers).ThenInclude(localSystem => localSystem.LocalSystems)
-                .FirstOrDefaultAsync(study => study.Identifier == identifier);
-
-            return identifierDb;
-        }
-
-        private async Task<RoleDb?> GetRoleAsync (string roleName)
-        {
-            return await _context.Roles.FirstOrDefaultAsync(role => role.Name == roleName);
-        }
-
-        private GovernmentResearchIdentifier Map(ResearchInitiativeDb researchInitiative)
-        {
-            var associatedSystemIdentifier = researchInitiative.LocalSystemLinkedIdentifiers.FirstOrDefault();
-
-            return new GovernmentResearchIdentifier
-            {
-                Identifier = researchInitiative.Identifier,
-                ShortTitle = researchInitiative.Name,
-                Created = researchInitiative.Created,
-                TeamMembers = Map(researchInitiative.ResearchInitiativeTeams),
-                LinkedSystemIdentifiers = Map(researchInitiative.LocalSystemLinkedIdentifiers)
-            };
-        }
-
-        private List<LinkedSystemIdentifier> Map(ICollection<SourceSystemLinkedIdentifierDb> localSystemLinkedIdentifiers)
-        {
-            var linkedIdentifiers = new List<LinkedSystemIdentifier>();
-
-            foreach (var  localIdentifier in localSystemLinkedIdentifiers)
-            {
-                linkedIdentifiers.Add(new LinkedSystemIdentifier
-                {
-                 CreatedAt = localIdentifier.Created,
-                 Identifier = localIdentifier.LocalSystemIdentifier,
-                 SystemName = localIdentifier.LocalSystems.Name
-                });
-            }
-
-            return linkedIdentifiers;
-        }
-
-        private List<TeamMember> Map(ICollection<ResearchInitiativeTeamMemberDb> researchInitiativeTeam)
-        {
-            var teamMembers = new List<TeamMember>();
-
-            foreach (var researchTeamMember in researchInitiativeTeam)
-            {
-                teamMembers.Add(new TeamMember
-                {
-                    Person = new PersonWithPrimaryEmail {
-                        Email = new Email { Address = researchTeamMember.Person.PrimaryEmail },
-                        Firstname = researchTeamMember.Person.Firstname,
-                        Lastname = researchTeamMember.Person.Lastname
-                    },
-                    Role = new Domain.Models.Role {
-                        Name = researchTeamMember.Role.Name
-                    },
-                    EffectiveFrom = researchTeamMember.EffectiveFrom,
-                    EffectiveTo = researchTeamMember.EffectiveTo
-                });
-            }
-
-            return teamMembers;
+            return personFromDb?.Person;
         }
     }
 }

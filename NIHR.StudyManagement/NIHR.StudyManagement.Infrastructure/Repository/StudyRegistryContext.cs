@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using NIHR.StudyManagement.Infrastructure.Repository.EnumsAndConstants;
+using NIHR.StudyManagement.Infrastructure.Repository.Models;
 
-namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
+namespace NIHR.StudyManagement.Infrastructure.Repository
 {
-    public partial class study_managementContext2 : DbContext
+    public partial class StudyRegistryContext : DbContext
     {
-        public study_managementContext2()
+        public StudyRegistryContext()
         {
         }
 
-        public study_managementContext2(DbContextOptions<study_managementContext2> options)
+        public StudyRegistryContext(DbContextOptions<StudyRegistryContext> options)
             : base(options)
         {
         }
@@ -187,7 +188,7 @@ namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
                     {
                         Id = 1,
                         Description = "A Chief investigator role",
-                        Type = Repository.EnumsAndConstants.PersonRoles.ChiefInvestigator,
+                        Type = EnumsAndConstants.PersonRoles.ChiefInvestigator,
                     });
             });
 
@@ -207,7 +208,7 @@ namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
                     new PersonType
                     {
                         Id = 1,
-                        Description = Repository.EnumsAndConstants.PersonTypes.Researcher
+                        Description = EnumsAndConstants.PersonTypes.Researcher
                     });
             });
 
@@ -278,8 +279,8 @@ namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
                     .HasColumnName("description");
 
                 entity.HasData(
-                    new ResearchInitiativeIdentifierType { Id = 1, Description = Repository.EnumsAndConstants.ResearchInitiativeIdentifierTypes.Project },
-                    new ResearchInitiativeIdentifierType { Id = 2, Description = Repository.EnumsAndConstants.ResearchInitiativeIdentifierTypes.Protocol }
+                    new ResearchInitiativeIdentifierType { Id = 1, Description = EnumsAndConstants.ResearchInitiativeIdentifierTypes.Project },
+                    new ResearchInitiativeIdentifierType { Id = 2, Description = EnumsAndConstants.ResearchInitiativeIdentifierTypes.Protocol }
                     );
             });
 
@@ -295,7 +296,7 @@ namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
                     .HasMaxLength(45)
                     .HasColumnName("description");
 
-                entity.HasData(new ResearchInitiativeType { Id = 1, Description = Repository.EnumsAndConstants.ResearchInitiativeTypes.Study });
+                entity.HasData(new ResearchInitiativeType { Id = 1, Description = EnumsAndConstants.ResearchInitiativeTypes.Study });
             });
 
             modelBuilder.Entity<ResearchStudyTeamMember>(entity =>

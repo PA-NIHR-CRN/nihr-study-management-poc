@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NIHR.StudyManagement.Infrastructure.Scaffolded02
+namespace NIHR.StudyManagement.Infrastructure.Repository.Models
 {
     public abstract class DbEntity
     {

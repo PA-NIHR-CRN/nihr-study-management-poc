@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NIHR.StudyManagement.Infrastructure.Scaffolded_archived_01
+namespace NIHR.StudyManagement.Infrastructure.Repository.Models
 {
-    public partial class PersonType
+    public partial class PersonType : DbEntity
     {
         public PersonType()
         {

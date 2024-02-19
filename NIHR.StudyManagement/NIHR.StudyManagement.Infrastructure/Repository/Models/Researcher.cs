@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NIHR.StudyManagement.Infrastructure.Scaffolded_archived_01
+namespace NIHR.StudyManagement.Infrastructure.Repository.Models
 {
-    public partial class PersonRole
+    public partial class Researcher : DbEntity
     {
-        public PersonRole()
+        public Researcher()
         {
             ResearchStudyTeamMembers = new HashSet<ResearchStudyTeamMember>();
         }
 
         public int Id { get; set; }
-        public string Type { get; set; } = null!;
-        public string? Description { get; set; }
+        public int PersonId { get; set; }
 
+        public virtual Person Person { get; set; } = null!;
         public virtual ICollection<ResearchStudyTeamMember> ResearchStudyTeamMembers { get; set; }
     }
 }

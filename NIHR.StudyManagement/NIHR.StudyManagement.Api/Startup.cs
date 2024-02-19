@@ -7,13 +7,11 @@ using NIHR.StudyManagement.Domain.Abstractions;
 using NIHR.StudyManagement.Domain.Configuration;
 using NIHR.StudyManagement.Domain.Services;
 using NIHR.StudyManagement.Infrastructure.Repository;
-using NIHR.StudyManagement.Infrastructure.Repository.Models.StudyRegistryContext;
 using System.Security.Claims;
 using MySql.EntityFrameworkCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using NIHR.StudyManagement.Infrastructure.Scaffolded02;
 
 namespace NIHR.StudyManagement.Api;
 
@@ -102,15 +100,12 @@ public class Startup
             swagger.UseAllOfToExtendReferenceSchemas();
         });
 
-        //services.AddTransient<IStudyRegistryRepository, StudyRegistryRepository>();
-        services.AddTransient<IStudyRegistryRepository, StudyRegistryRepositoryNew>();
+        services.AddTransient<IStudyRegistryRepository, StudyRegistryRepository>();
 
         services.AddTransient<IGovernmentResearchIdentifierService, GovernmentResearchIdentifierService>();
         services.AddTransient<IGovernmentResearchIdentifierDtoMapper, GovernmentResearchIdentifierDtoMapper>();
 
         services.AddDbContext<StudyRegistryContext>(options => options.UseMySQL(studyManagementApiSettings.Data.ConnectionString));
-
-        services.AddDbContext<study_managementContext2>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<StudyManagementApiSettings> studyManagementApiSettings)
