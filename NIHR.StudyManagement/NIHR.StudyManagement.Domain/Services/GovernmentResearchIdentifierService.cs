@@ -3,6 +3,7 @@ using NIHR.StudyManagement.Domain.Abstractions;
 using NIHR.StudyManagement.Domain.Configuration;
 using NIHR.StudyManagement.Domain.Exceptions;
 using NIHR.StudyManagement.Domain.Models;
+using System.Security.Cryptography;
 
 namespace NIHR.StudyManagement.Domain.Services
 {
@@ -138,11 +139,10 @@ namespace NIHR.StudyManagement.Domain.Services
         private static string GetRandomSting(int minAsciiValue, int maxAsciiValue, int numberCharacters)
         {
             var identifier = "";
-            var random = new Random();
 
             for (int i = 0; i < numberCharacters; i++)
             {
-                var randomCharacterAscii = random.Next(minAsciiValue, maxAsciiValue);
+                var randomCharacterAscii = RandomNumberGenerator.GetInt32(minAsciiValue, maxAsciiValue);
 
                 var randomCharacter = ((char)randomCharacterAscii).ToString();
                 identifier = identifier + randomCharacter;
