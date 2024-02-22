@@ -23,12 +23,12 @@ namespace NIHR.StudyManagement.Domain.Services
             if (string.IsNullOrEmpty(this._settings.DefaultLocalSystemName)) throw new ArgumentNullException(nameof(_settings.DefaultLocalSystemName));
         }
 
-        public async Task<GovernmentResearchIdentifier> RegisterStudy(RegisterStudyRequest request)
+        public async Task<GovernmentResearchIdentifier> RegisterStudyAsync(RegisterStudyRequest request)
         {
             return await RegisterNewStudyWithNewIdentifierAsync(request);
         }
 
-        public async Task<GovernmentResearchIdentifier> RegisterStudy(RegisterStudyToExistingIdentifierRequest request)
+        public async Task<GovernmentResearchIdentifier> RegisterStudyAsync(RegisterStudyToExistingIdentifierRequest request)
         {
             if (string.IsNullOrEmpty(request.Identifier)) throw new ArgumentNullException(nameof(request.Identifier));
 

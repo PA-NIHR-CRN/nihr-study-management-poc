@@ -29,9 +29,9 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
                 throw new ArgumentNullException(nameof(request));
             };
 
-            var studyType = await GetResearchInitiativeType(ResearchInitiativeTypes.Study) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeType));
+            var studyType = await GetResearchInitiativeTypeAsync(ResearchInitiativeTypes.Study) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeType));
 
-            var sourceSystem = await GetSourceSystem(SourceSystemNames.Edge) ?? throw new EntityNotFoundException(nameof(SourceSystem));
+            var sourceSystem = await GetSourceSystemAsync(SourceSystemNames.Edge) ?? throw new EntityNotFoundException(nameof(SourceSystem));
 
             var personTypeResearcher = _context.PersonTypes.FirstOrDefault(x => x.Description == PersonTypes.Researcher) ?? throw new EntityNotFoundException(nameof(PersonType));
 
@@ -117,9 +117,9 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
 
             var griResearchStudy = await GetGriResearchStudyByIdentifierAsync(request.Identifier) ?? throw new GriNotFoundException();
 
-            var studyType = await GetResearchInitiativeType(ResearchInitiativeTypes.Study) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeType));
+            var studyType = await GetResearchInitiativeTypeAsync(ResearchInitiativeTypes.Study) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeType));
 
-            var sourceSystem = await GetSourceSystem(request.LocalSystemName) ?? throw new EntityNotFoundException(nameof(SourceSystem));
+            var sourceSystem = await GetSourceSystemAsync(request.LocalSystemName) ?? throw new EntityNotFoundException(nameof(SourceSystem));
 
             var personTypeResearcher = _context.PersonTypes.FirstOrDefault(x => x.Description == PersonTypes.Researcher) ?? throw new EntityNotFoundException(nameof(PersonType));
 
@@ -260,12 +260,12 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
         }
 
 
-        private async Task<SourceSystem?> GetSourceSystem(string code)
+        private async Task<SourceSystem?> GetSourceSystemAsync(string code)
         {
             return await _context.SourceSystems.FirstOrDefaultAsync(system => system.Code == code);
         }
 
-        private async Task<ResearchInitiativeType?> GetResearchInitiativeType(string code)
+        private async Task<ResearchInitiativeType?> GetResearchInitiativeTypeAsync(string code)
         {
             return await _context.ResearchInitiativeTypes.FirstOrDefaultAsync(x => x.Description == code);
         }

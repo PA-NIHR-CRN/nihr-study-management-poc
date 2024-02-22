@@ -33,11 +33,11 @@ namespace NIHR.StudyManagement.Api.Controllers
         /// <param name="request"></param>
         [ProducesResponseType(typeof(GovernmentResearchIdentifierDto), StatusCodes.Status201Created)]
         [HttpPost]
-        public async Task<IActionResult> Create(RegisterStudyRequestDto request)
+        public async Task<IActionResult> CreateAsync(RegisterStudyRequestDto request)
         {
             var createIdentifierRequest = _dtoMapper.Map(request);
 
-            var identifier = await _governmentResearchIdentifierService.RegisterStudy(createIdentifierRequest);
+            var identifier = await _governmentResearchIdentifierService.RegisterStudyAsync(createIdentifierRequest);
 
             var responseDto = _dtoMapper.Map(identifier);
 
@@ -52,11 +52,11 @@ namespace NIHR.StudyManagement.Api.Controllers
         [ProducesResponseType(typeof(GovernmentResearchIdentifierDto), StatusCodes.Status201Created)]
         [HttpPatch]
         [Route("{identifier}")]
-        public async Task<IActionResult> RegisterStudyToExistingIdentifier(RegisterStudyRequestDto request, string identifier)
+        public async Task<IActionResult> RegisterStudyToExistingIdentifierAsync(RegisterStudyRequestDto request, string identifier)
         {
             var createIdentifierRequest = _dtoMapper.Map(request, identifier);
 
-            var identifierx = await _governmentResearchIdentifierService.RegisterStudy(createIdentifierRequest);
+            var identifierx = await _governmentResearchIdentifierService.RegisterStudyAsync(createIdentifierRequest);
 
             var responseDto = _dtoMapper.Map(identifierx);
 
