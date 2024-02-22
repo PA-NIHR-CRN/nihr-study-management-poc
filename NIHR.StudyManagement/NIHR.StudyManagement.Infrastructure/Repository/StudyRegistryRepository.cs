@@ -22,7 +22,8 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
             _context = context;
         }
 
-        public async Task<GovernmentResearchIdentifier> CreateAsync(RegisterStudyRequestWithContext request)
+        public async Task<GovernmentResearchIdentifier> CreateAsync(RegisterStudyRequestWithContext request,
+            CancellationToken cancellationToken = default)
         {
             if (request == null)
             {
@@ -100,18 +101,19 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
                 PersonRole = personRoleCI
             };
 
-            await _context.AddAsync(griMappingForProtocol);
+            await _context.AddAsync(griMappingForProtocol, cancellationToken);
 
-            await _context.AddAsync(griMapping);
+            await _context.AddAsync(griMapping, cancellationToken);
 
-            await _context.AddAsync(teamMember);
+            await _context.AddAsync(teamMember, cancellationToken);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return await GetAsync(researchStudy.Gri);
         }
 
-        public async Task<GovernmentResearchIdentifier> AddStudyToIdentifierAsync(AddStudyToExistingIdentifierRequestWithContext request)
+        public async Task<GovernmentResearchIdentifier> AddStudyToIdentifierAsync(AddStudyToExistingIdentifierRequestWithContext request,
+            CancellationToken cancellationToken = default)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
@@ -163,10 +165,10 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
                 PersonRole = personRoleCI
             };
 
-            await _context.AddAsync(teamMember);
-            await _context.AddAsync(griMapping);
+            await _context.AddAsync(teamMember, cancellationToken);
+            await _context.AddAsync(griMapping, cancellationToken);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return await GetAsync(griResearchStudy.Gri);
         }

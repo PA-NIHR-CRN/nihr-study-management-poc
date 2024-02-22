@@ -23,19 +23,22 @@ namespace NIHR.StudyManagement.Domain.Services
             if (string.IsNullOrEmpty(this._settings.DefaultLocalSystemName)) throw new ArgumentNullException(nameof(_settings.DefaultLocalSystemName));
         }
 
-        public async Task<GovernmentResearchIdentifier> RegisterStudyAsync(RegisterStudyRequest request)
+        public async Task<GovernmentResearchIdentifier> RegisterStudyAsync(RegisterStudyRequest request,
+            CancellationToken cancellationToken = default)
         {
-            return await RegisterNewStudyWithNewIdentifierAsync(request);
+            return await RegisterNewStudyWithNewIdentifierAsync(request, cancellationToken);
         }
 
-        public async Task<GovernmentResearchIdentifier> RegisterStudyAsync(RegisterStudyToExistingIdentifierRequest request)
+        public async Task<GovernmentResearchIdentifier> RegisterStudyAsync(RegisterStudyToExistingIdentifierRequest request,
+            CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(request.Identifier)) throw new ArgumentNullException(nameof(request.Identifier));
 
-            return await AddNewStudyToExistingIdentifierAsync(request);
+            return await AddNewStudyToExistingIdentifierAsync(request, cancellationToken);
         }
 
-        private async Task<GovernmentResearchIdentifier> AddNewStudyToExistingIdentifierAsync(RegisterStudyToExistingIdentifierRequest request)
+        private async Task<GovernmentResearchIdentifier> AddNewStudyToExistingIdentifierAsync(RegisterStudyToExistingIdentifierRequest request,
+            CancellationToken cancellationToken)
         {
             if (request == null || string.IsNullOrEmpty(request.Identifier)) throw new ArgumentNullException(nameof(request));
 
@@ -68,7 +71,7 @@ namespace NIHR.StudyManagement.Domain.Services
                 ProtocolId = request.ProtocolId
             };
 
-            return await _governmentResearchIdentifierRepository.AddStudyToIdentifierAsync(domainRequest);
+            return await _governmentResearchIdentifierRepository.AddStudyToIdentifierAsync(domainRequest, cancellationToken);
         }
 
         private RegisterStudyRequestWithContext Map(RegisterStudyRequest request, string identifier)
@@ -86,14 +89,15 @@ namespace NIHR.StudyManagement.Domain.Services
             };
         }
 
-        private async Task<GovernmentResearchIdentifier> RegisterNewStudyWithNewIdentifierAsync(RegisterStudyRequest request)
+        private async Task<GovernmentResearchIdentifier> RegisterNewStudyWithNewIdentifierAsync(RegisterStudyRequest request,
+            CancellationToken cancellationToken)
         {
             // Generate the GRI
             var gri = GenerateGrisPostcode();
 
             var domainRequest =  Map(request, gri);
 
-            return await _governmentResearchIdentifierRepository.CreateAsync(domainRequest);
+            return await _governmentResearchIdentifierRepository.CreateAsync(domainRequest, cancellationToken);
         }
 
         public async Task<GovernmentResearchIdentifier> GetAsync(string identifier)

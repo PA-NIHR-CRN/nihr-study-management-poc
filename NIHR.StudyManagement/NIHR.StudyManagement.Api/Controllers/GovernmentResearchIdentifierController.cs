@@ -31,13 +31,14 @@ namespace NIHR.StudyManagement.Api.Controllers
         /// This operation registers the given study and generates an associated GRI.
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
         [ProducesResponseType(typeof(GovernmentResearchIdentifierDto), StatusCodes.Status201Created)]
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(RegisterStudyRequestDto request)
+        public async Task<IActionResult> CreateAsync(RegisterStudyRequestDto request, CancellationToken cancellationToken = default)
         {
             var createIdentifierRequest = _dtoMapper.Map(request);
 
-            var identifier = await _governmentResearchIdentifierService.RegisterStudyAsync(createIdentifierRequest);
+            var identifier = await _governmentResearchIdentifierService.RegisterStudyAsync(createIdentifierRequest, cancellationToken);
 
             var responseDto = _dtoMapper.Map(identifier);
 
@@ -49,16 +50,18 @@ namespace NIHR.StudyManagement.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <param name="identifier"></param>
+        /// <param name="cancellationToken"></param>
         [ProducesResponseType(typeof(GovernmentResearchIdentifierDto), StatusCodes.Status201Created)]
         [HttpPatch]
         [Route("{identifier}")]
-        public async Task<IActionResult> RegisterStudyToExistingIdentifierAsync(RegisterStudyRequestDto request, string identifier)
+        public async Task<IActionResult> RegisterStudyToExistingIdentifierAsync(RegisterStudyRequestDto request, string identifier,
+            CancellationToken cancellationToken = default)
         {
             var createIdentifierRequest = _dtoMapper.Map(request, identifier);
 
-            var identifierx = await _governmentResearchIdentifierService.RegisterStudyAsync(createIdentifierRequest);
+            var governmentResearchIdentifier = await _governmentResearchIdentifierService.RegisterStudyAsync(createIdentifierRequest, cancellationToken);
 
-            var responseDto = _dtoMapper.Map(identifierx);
+            var responseDto = _dtoMapper.Map((Domain.Models.GovernmentResearchIdentifier)governmentResearchIdentifier);
 
             return Ok(responseDto);
         }
