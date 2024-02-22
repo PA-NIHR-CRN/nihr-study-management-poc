@@ -6,6 +6,6 @@
 
         public string SystemName { get; set; } = "";
 
-        public DateTime CreatedAt { get; set; } = DateTime.MinValue;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
