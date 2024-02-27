@@ -109,7 +109,7 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return await GetAsync(researchStudy.Gri, cancellationToken);
+            return Map(researchStudy);
         }
 
         public async Task<GovernmentResearchIdentifier> AddStudyToIdentifierAsync(AddStudyToExistingIdentifierRequestWithContext request,
@@ -121,11 +121,11 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
 
             var studyType = await GetResearchInitiativeTypeAsync(ResearchInitiativeTypes.Study, cancellationToken) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeType));
 
-            var sourceSystem = await GetSourceSystemAsync(request.LocalSystemName, cancellationToken) ?? throw new EntityNotFoundException(nameof(SourceSystem));
+            var sourceSystem = await GetSourceSystemAsync(SourceSystemNames.Edge, cancellationToken) ?? throw new EntityNotFoundException(nameof(SourceSystem));
 
             var personTypeResearcher = await _context.PersonTypes.FirstOrDefaultAsync(x => x.Description == PersonTypes.Researcher, cancellationToken) ?? throw new EntityNotFoundException(nameof(PersonType));
 
-            var personRoleCI = await _context.PersonRoles.FirstOrDefaultAsync(x => x.Type == request.RoleName, cancellationToken) ?? throw new EntityNotFoundException(nameof(PersonRole));
+            var personRoleCI = await _context.PersonRoles.FirstOrDefaultAsync(x => x.Type == PersonRoles.ChiefInvestigator, cancellationToken) ?? throw new EntityNotFoundException(nameof(PersonRole));
 
             var projectResearchInitiativeIdentifierType = await _context.ResearchInitiativeIdentifierTypes
                 .FirstOrDefaultAsync(x => x.Description == ResearchInitiativeIdentifierTypes.Project) ?? throw new EntityNotFoundException(nameof(ResearchInitiativeIdentifierType));
@@ -170,7 +170,7 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return await GetAsync(griResearchStudy.Gri, cancellationToken);
+            return Map(griResearchStudy);
         }
 
         public async Task<GovernmentResearchIdentifier> GetAsync(string identifier, CancellationToken cancellationToken = default)
