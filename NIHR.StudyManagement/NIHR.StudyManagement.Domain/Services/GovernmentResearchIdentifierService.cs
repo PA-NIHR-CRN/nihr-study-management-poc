@@ -44,7 +44,7 @@ namespace NIHR.StudyManagement.Domain.Services
             if (request == null || string.IsNullOrEmpty(request.Identifier)) throw new ArgumentNullException(nameof(request));
 
             // Verify that the GRI exists
-            var existingIdentifier = await GetByIdentifierAsync(request.Identifier);
+            var existingIdentifier = await GetByIdentifierAsync(request.Identifier, cancellationToken);
 
             if(existingIdentifier == null)
             {
@@ -101,9 +101,9 @@ namespace NIHR.StudyManagement.Domain.Services
             return await _governmentResearchIdentifierRepository.CreateAsync(domainRequest, cancellationToken);
         }
 
-        public async Task<GovernmentResearchIdentifier> GetAsync(string identifier)
+        public async Task<GovernmentResearchIdentifier> GetAsync(string identifier, CancellationToken cancellationToken = default)
         {
-            var existingIdentifier = await _governmentResearchIdentifierRepository.GetAsync(identifier);
+            var existingIdentifier = await _governmentResearchIdentifierRepository.GetAsync(identifier, cancellationToken);
 
             if (existingIdentifier == null)
             {
@@ -113,9 +113,9 @@ namespace NIHR.StudyManagement.Domain.Services
             return existingIdentifier;
         }
 
-        private async Task<GovernmentResearchIdentifier> GetByIdentifierAsync(string identifier)
+        private async Task<GovernmentResearchIdentifier> GetByIdentifierAsync(string identifier, CancellationToken cancellationToken)
         {
-            return await _governmentResearchIdentifierRepository.GetAsync(identifier);
+            return await _governmentResearchIdentifierRepository.GetAsync(identifier, cancellationToken);
         }
 
         /// <summary>

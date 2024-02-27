@@ -70,11 +70,12 @@ namespace NIHR.StudyManagement.Api.Controllers
         /// An operation to retrieve the details of the specified identifier.
         /// </summary>
         /// <param name="identifier"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(GovernmentResearchIdentifierDto), StatusCodes.Status200OK)]
         [Route("{identifier}")]
-        public async Task<IActionResult> Get(string identifier)
+        public async Task<IActionResult> GetAsync(string identifier, CancellationToken cancellationToken = default)
         {
             try
             {
