@@ -42,7 +42,7 @@ namespace NIHR.StudyManagement.Api.Controllers
 
             var responseDto = _dtoMapper.Map(identifier);
 
-            return Ok(responseDto);
+            return CreatedAtAction(nameof(GetIdentifierAsync), new { identifier = responseDto.Gri }, responseDto);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace NIHR.StudyManagement.Api.Controllers
 
             var responseDto = _dtoMapper.Map((Domain.Models.GovernmentResearchIdentifier)governmentResearchIdentifier);
 
-            return Ok(responseDto);
+            return CreatedAtAction(nameof(GetIdentifierAsync), new { identifier = responseDto.Gri }, responseDto);
         }
 
         /// <summary>
@@ -75,7 +75,8 @@ namespace NIHR.StudyManagement.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(GovernmentResearchIdentifierDto), StatusCodes.Status200OK)]
         [Route("{identifier}")]
-        public async Task<IActionResult> GetAsync(string identifier, CancellationToken cancellationToken = default)
+        [ActionName(nameof(GetIdentifierAsync))]
+        public async Task<IActionResult> GetIdentifierAsync(string identifier, CancellationToken cancellationToken = default)
         {
             try
             {
