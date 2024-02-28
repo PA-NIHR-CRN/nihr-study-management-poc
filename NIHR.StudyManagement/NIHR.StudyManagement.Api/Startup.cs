@@ -123,7 +123,7 @@ public class Startup
             {
                 connectionString = studyManagementApiSettings.Data.ConnectionString;
             }
-            Console.WriteLine($"DEBUG DELETE ME: {connectionString}");
+
             options.UseMySQL(connectionString);
         });
     }
