@@ -12,6 +12,7 @@ using MySql.EntityFrameworkCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using NIHR.StudyManagement.Infrastructure.MessageBus;
 
 namespace NIHR.StudyManagement.Api;
 
@@ -45,11 +46,15 @@ public class Startup
         _logger.LogInformation("Configuring services..");
 
         var studyManagementApiConfigurationSection = Configuration.GetSection("StudyManagementApi");
+        var s3ConfigurationSection = Configuration.GetSection("S3");
 
         var studyManagementApiSettings = studyManagementApiConfigurationSection.Get<StudyManagementApiSettings>();
+        var s3Settings = s3ConfigurationSection.Get<S3Settings>();
 
         services.AddOptions<StudyManagementApiSettings>().Bind(studyManagementApiConfigurationSection);
         services.AddOptions<StudyManagementSettings>().Bind(Configuration.GetSection("StudyManagement"));
+        services.AddOptions<MessageBusSettings>().Bind(Configuration.GetSection("MessageBus"));
+        services.AddOptions<S3Settings>().Bind(s3ConfigurationSection);
 
         _logger.LogDebug($"Application settings StudyManagementApiSettings: {System.Text.Json.JsonSerializer.Serialize(studyManagementApiSettings)}");
 
@@ -101,11 +106,22 @@ public class Startup
         });
 
         services.AddTransient<IStudyRegistryRepository, StudyRegistryRepository>();
-
         services.AddTransient<IGovernmentResearchIdentifierService, GovernmentResearchIdentifierService>();
         services.AddTransient<IGovernmentResearchIdentifierDtoMapper, GovernmentResearchIdentifierDtoMapper>();
-
         services.AddDbContext<StudyRegistryContext>(options => options.UseMySQL(studyManagementApiSettings.Data.ConnectionString));
+
+        // If S3 is configured, then register the S3 implementation of IStudyEventMessagePublisher, otherwise default to MSK/Kafka
+        if(s3Settings != null
+            && !string.IsNullOrEmpty(s3Settings.BucketName))
+        {
+            _logger.LogInformation("S3 configuration found, registering message publishing to S3.");
+            services.AddTransient<IStudyEventMessagePublisher, StudyManagementS3MessagePublisher>();
+        }
+        else
+        {
+            _logger.LogInformation("Registering message publishing to MSK.");
+            services.AddTransient<IStudyEventMessagePublisher, StudyManagementKafkaMessageProducer>();
+        }
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<StudyManagementApiSettings> studyManagementApiSettings)

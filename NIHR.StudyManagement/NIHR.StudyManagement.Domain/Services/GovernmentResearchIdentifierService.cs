@@ -10,14 +10,17 @@ namespace NIHR.StudyManagement.Domain.Services
     public class GovernmentResearchIdentifierService : IGovernmentResearchIdentifierService
     {
         private readonly IStudyRegistryRepository _governmentResearchIdentifierRepository;
+        private readonly IStudyEventMessagePublisher _messagePublisher;
 
         private readonly StudyManagementSettings _settings;
 
         public GovernmentResearchIdentifierService(IStudyRegistryRepository governmentResearchIdentifierRepository,
-            IOptions<StudyManagementSettings> settings)
+            IOptions<StudyManagementSettings> settings,
+            IStudyEventMessagePublisher messagePublisher)
         {
             this._governmentResearchIdentifierRepository = governmentResearchIdentifierRepository;
             this._settings = settings.Value;
+            this._messagePublisher = messagePublisher;
 
             if (string.IsNullOrEmpty(this._settings.DefaultRoleName)) throw new ArgumentNullException(nameof(_settings.DefaultRoleName));
 
@@ -72,7 +75,11 @@ namespace NIHR.StudyManagement.Domain.Services
                 ProtocolId = request.ProtocolId
             };
 
-            return await _governmentResearchIdentifierRepository.AddStudyToIdentifierAsync(domainRequest, cancellationToken);
+            var researchStudy = await _governmentResearchIdentifierRepository.AddStudyToIdentifierAsync(domainRequest, cancellationToken);
+
+            await _messagePublisher.PublishAsync("gris-study-registered", _settings.DefaultLocalSystemName, researchStudy, cancellationToken);
+
+            return researchStudy;
         }
 
         private RegisterStudyRequestWithContext Map(RegisterStudyRequest request, string identifier)
@@ -98,7 +105,11 @@ namespace NIHR.StudyManagement.Domain.Services
 
             var domainRequest =  Map(request, gri);
 
-            return await _governmentResearchIdentifierRepository.CreateAsync(domainRequest, cancellationToken);
+            var researchStudy = await _governmentResearchIdentifierRepository.CreateAsync(domainRequest, cancellationToken);
+
+            await _messagePublisher.PublishAsync("gris-study-registered", _settings.DefaultLocalSystemName, researchStudy, cancellationToken);
+
+            return researchStudy;
         }
 
         public async Task<GovernmentResearchIdentifier> GetAsync(string identifier, CancellationToken cancellationToken = default)

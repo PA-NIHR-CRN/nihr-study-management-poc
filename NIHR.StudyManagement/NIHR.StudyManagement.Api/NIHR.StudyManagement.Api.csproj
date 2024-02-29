@@ -21,6 +21,7 @@
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="8.1.1" />
     <PackageReference Include="Amazon.Lambda.Core" Version="2.2.0" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.305.29" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.26" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
@@ -34,7 +35,8 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="MySql.EntityFrameworkCore" Version="6.0.25" />
-	</ItemGroup>
+	  <PackageReference Include="Confluent.Kafka" Version="2.3.0" />
+  </ItemGroup>
 	<ItemGroup>
     <ProjectReference Include="..\NIHR.StudyManagement.Domain\NIHR.StudyManagement.Domain.csproj" />
     <ProjectReference Include="..\NIHR.StudyManagement.Infrastructure\NIHR.StudyManagement.Infrastructure.csproj" />
