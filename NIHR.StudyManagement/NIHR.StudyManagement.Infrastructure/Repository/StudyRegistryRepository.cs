@@ -81,6 +81,13 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
                 SourceSystem = sourceSystem
             };
 
+            var griResearchStudyStatus = new GriResearchStudyStatus
+            {
+                Code = request.StatusCode,
+                GriMapping = griMapping,
+                FromDate = DateTime.Now
+            };
+
             var chiefInvestigator = await GetPersonAsync(request.ChiefInvestigator, cancellationToken) ?? new PersonDb
             {
                 PersonNames = new PersonName[] { new PersonName {
@@ -104,6 +111,8 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
             await _context.AddAsync(griMappingForProtocol, cancellationToken);
 
             await _context.AddAsync(griMapping, cancellationToken);
+
+            await _context.AddAsync(griResearchStudyStatus, cancellationToken);
 
             await _context.AddAsync(teamMember, cancellationToken);
 
@@ -145,6 +154,13 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
                 SourceSystem = sourceSystem
             };
 
+            var griResearchStudyStatus = new GriResearchStudyStatus
+            {
+                Code = request.StatusCode,
+                GriMapping = griMapping,
+                FromDate = DateTime.Now
+            };
+
             var chiefInvestigator = await GetPersonAsync(request.ChiefInvestigator, cancellationToken) ?? new PersonDb
             {
                 PersonNames = new PersonName[] { new PersonName {
@@ -167,6 +183,7 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
 
             await _context.AddAsync(teamMember, cancellationToken);
             await _context.AddAsync(griMapping, cancellationToken);
+            await _context.AddAsync(griResearchStudyStatus, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -192,7 +209,8 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
                 {
                     CreatedAt = x.Created,
                     SystemName = x.SourceSystem.Description,
-                    Identifier = x.ResearchInitiativeIdentifier.Value
+                    Identifier = x.ResearchInitiativeIdentifier.Value,
+                    StatusCode = x.GriResearchStudyStatuses.FirstOrDefault(status => !status.ToDate.HasValue)?.Code ?? ""
                 });
             }
 
@@ -250,6 +268,7 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
                  .Include(context => context.ResearchStudyTeamMembers).ThenInclude(x => x.PersonRole)
                  .Include(study => study.GriMappings).ThenInclude(mapping => mapping.SourceSystem)
                  .Include(study => study.GriMappings).ThenInclude(mapping => mapping.ResearchInitiativeIdentifier)
+                 .Include(study => study.GriMappings).ThenInclude(mapping => mapping.GriResearchStudyStatuses)
                 .FirstOrDefaultAsync(x => x.Gri == identifier, cancellationToken);
 
             return griResearchStudy;
