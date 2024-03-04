@@ -46,7 +46,6 @@ public class Startup
         _logger.LogInformation("Configuring services..");
 
         var studyManagementApiConfigurationSection = Configuration.GetSection("StudyManagementApi");
-        var s3ConfigurationSection = Configuration.GetSection("S3");
 
         var studyManagementApiSettings = studyManagementApiConfigurationSection.Get<StudyManagementApiSettings>();
 
