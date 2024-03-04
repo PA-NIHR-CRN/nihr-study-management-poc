@@ -75,7 +75,7 @@ namespace NIHR.StudyManagement.Api.Mappers
                     Identifier = linkedSystemIdentifier.Identifier,
                     SystemName = linkedSystemIdentifier.SystemName,
                     CreatedAt = linkedSystemIdentifier.CreatedAt,
-                    StatusCode = linkedSystemIdentifier.StatusCode
+                    Status = linkedSystemIdentifier.StatusCode
                 });
             }
 

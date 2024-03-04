@@ -8,6 +8,6 @@
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public string StatusCode { get; set; } = "";
+        public string Status { get; set; } = "";
     }
 }
