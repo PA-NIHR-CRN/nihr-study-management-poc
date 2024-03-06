@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using NIHR.StudyManagement.Domain.Abstractions;
 using NIHR.StudyManagement.Domain.Configuration;
+using NIHR.StudyManagement.Domain.Constants;
 using NIHR.StudyManagement.Domain.Exceptions;
 using NIHR.StudyManagement.Domain.Models;
 using System.Security.Cryptography;
@@ -77,7 +78,7 @@ namespace NIHR.StudyManagement.Domain.Services
 
             var researchStudy = await _governmentResearchIdentifierRepository.AddStudyToIdentifierAsync(domainRequest, cancellationToken);
 
-            await _messagePublisher.PublishAsync("gris-study-registered", _settings.DefaultLocalSystemName, researchStudy, cancellationToken);
+            await _messagePublisher.PublishAsync(GrisNsipEventTypes.StudyRegistered, _settings.DefaultLocalSystemName, researchStudy, cancellationToken);
 
             return researchStudy;
         }
@@ -107,7 +108,7 @@ namespace NIHR.StudyManagement.Domain.Services
 
             var researchStudy = await _governmentResearchIdentifierRepository.CreateAsync(domainRequest, cancellationToken);
 
-            await _messagePublisher.PublishAsync("gris-study-registered", _settings.DefaultLocalSystemName, researchStudy, cancellationToken);
+            await _messagePublisher.PublishAsync(GrisNsipEventTypes.StudyRegistered, _settings.DefaultLocalSystemName, researchStudy, cancellationToken);
 
             return researchStudy;
         }

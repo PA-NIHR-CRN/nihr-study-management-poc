@@ -52,30 +52,22 @@ namespace NIHR.StudyManagement.Infrastructure.MessageBus
             {
                 var msg = new Message<Null, string>() { Value = nsipMessageJson };
 
-                try
-                {
-                    _logger.LogInformation($"Producer: About to publish {nsipMessageJson}");
+                _logger.LogInformation($"Producer: About to publish {nsipMessageJson}");
 
-                    var deliveryReport = await producer.ProduceAsync(_settings.Topic, msg, cancellationToken: cancellationToken);
+                var deliveryReport = await producer.ProduceAsync(_settings.Topic, msg, cancellationToken: cancellationToken);
 
-                    _logger.LogInformation("Delivered message to Topic={Topic} " +
-                        "Offset={Offset} " +
-                        "Key={Key} " +
-                        "Partition={Partition} " +
-                        "Status={Status} " +
-                        "Value={Value}",
-                        _settings.Topic,
-                        deliveryReport.Offset.Value,
-                        "PoC" ?? "NULL",
-                        deliveryReport.TopicPartition.Partition.Value,
-                        deliveryReport.Status,
-                        nsipMessageJson);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Kafka exception: {Message}", ex.Message);
-                    throw;
-                }
+                _logger.LogInformation("Delivered message to Topic={Topic} " +
+                    "Offset={Offset} " +
+                    "Key={Key} " +
+                    "Partition={Partition} " +
+                    "Status={Status} " +
+                    "Value={Value}",
+                    _settings.Topic,
+                    deliveryReport.Offset.Value,
+                    "PoC" ?? "NULL",
+                    deliveryReport.TopicPartition.Partition.Value,
+                    deliveryReport.Status,
+                    nsipMessageJson);
             }
         }
     }
