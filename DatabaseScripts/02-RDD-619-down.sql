@@ -1,0 +1,15 @@
+﻿START TRANSACTION;
+
+IF EXISTS(SELECT * FROM `__EFMigrationsHistory` WHERE `MigrationId` = '20240301114842_02-RDD-619')
+BEGIN
+    DROP TABLE `griResearchStudyStatus`;
+END;
+
+IF EXISTS(SELECT * FROM `__EFMigrationsHistory` WHERE `MigrationId` = '20240301114842_02-RDD-619')
+BEGIN
+    DELETE FROM `__EFMigrationsHistory`
+    WHERE `MigrationId` = '20240301114842_02-RDD-619';
+END;
+
+COMMIT;
+
