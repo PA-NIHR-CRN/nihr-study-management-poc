@@ -9,13 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NIHR.StudyManagement.Infras
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NIHR.StudyManagement.Domain", "NIHR.StudyManagement.Domain\NIHR.StudyManagement.Domain.csproj", "{3A62738A-FE85-41B5-9D65-707C03D4E600}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DatabaseScripts", "DatabaseScripts", "{F7748AB8-9D35-4B98-A9A6-220CC8FCF235}"
-	ProjectSection(SolutionItems) = preProject
-		..\DatabaseScripts\02-RDD-619-down.sql = ..\DatabaseScripts\02-RDD-619-down.sql
-		..\DatabaseScripts\02-RDD-619-up.sql = ..\DatabaseScripts\02-RDD-619-up.sql
-		..\DatabaseScripts\1-CreateInitialDatabase-RDDI-100.sql = ..\DatabaseScripts\1-CreateInitialDatabase-RDDI-100.sql
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

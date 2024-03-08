@@ -11,8 +11,8 @@ using NIHR.StudyManagement.Infrastructure.Repository;
 namespace NIHR.StudyManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(StudyRegistryContext))]
-    [Migration("20240301114842_02-RDD-619")]
-    partial class _02RDD619
+    [Migration("20240308110904_01-Initial")]
+    partial class _01Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -220,7 +220,7 @@ namespace NIHR.StudyManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2024, 3, 1, 11, 48, 42, 13, DateTimeKind.Local).AddTicks(6382),
+                            Created = new DateTime(2024, 3, 8, 11, 9, 4, 591, DateTimeKind.Local).AddTicks(1968),
                             Description = "A Chief investigator role",
                             Type = "CHIEF_INVESTIGATOR"
                         });
@@ -251,7 +251,7 @@ namespace NIHR.StudyManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2024, 3, 1, 11, 48, 42, 13, DateTimeKind.Local).AddTicks(7023),
+                            Created = new DateTime(2024, 3, 8, 11, 9, 4, 591, DateTimeKind.Local).AddTicks(2488),
                             Description = "RESEARCHER"
                         });
                 });
@@ -360,13 +360,13 @@ namespace NIHR.StudyManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2024, 3, 1, 11, 48, 42, 14, DateTimeKind.Local).AddTicks(3080),
+                            Created = new DateTime(2024, 3, 8, 11, 9, 4, 592, DateTimeKind.Local).AddTicks(3764),
                             Description = "PROJECT"
                         },
                         new
                         {
                             Id = 2,
-                            Created = new DateTime(2024, 3, 1, 11, 48, 42, 14, DateTimeKind.Local).AddTicks(3094),
+                            Created = new DateTime(2024, 3, 8, 11, 9, 4, 592, DateTimeKind.Local).AddTicks(3824),
                             Description = "PROTOCOL"
                         });
                 });
@@ -395,7 +395,7 @@ namespace NIHR.StudyManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2024, 3, 1, 11, 48, 42, 14, DateTimeKind.Local).AddTicks(3469),
+                            Created = new DateTime(2024, 3, 8, 11, 9, 4, 592, DateTimeKind.Local).AddTicks(4605),
                             Description = "STUDY"
                         });
                 });
@@ -474,14 +474,14 @@ namespace NIHR.StudyManagement.Infrastructure.Migrations
                         {
                             Id = 1,
                             Code = "EDGE",
-                            Created = new DateTime(2024, 3, 1, 11, 48, 42, 14, DateTimeKind.Local).AddTicks(9837),
+                            Created = new DateTime(2024, 3, 8, 11, 9, 4, 594, DateTimeKind.Local).AddTicks(4158),
                             Description = "Edge system"
                         },
                         new
                         {
                             Id = 2,
                             Code = "IRAS",
-                            Created = new DateTime(2024, 3, 1, 11, 48, 42, 14, DateTimeKind.Local).AddTicks(9850),
+                            Created = new DateTime(2024, 3, 8, 11, 9, 4, 594, DateTimeKind.Local).AddTicks(4214),
                             Description = "IRAS system"
                         });
                 });

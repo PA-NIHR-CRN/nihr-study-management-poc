@@ -8,7 +8,6 @@ using NIHR.StudyManagement.Domain.Configuration;
 using NIHR.StudyManagement.Domain.Services;
 using NIHR.StudyManagement.Infrastructure.Repository;
 using System.Security.Claims;
-using MySql.EntityFrameworkCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -124,7 +123,9 @@ public class Startup
                 connectionString = studyManagementApiSettings.Data.ConnectionString;
             }
 
-            options.UseMySQL(connectionString);
+            var serverVersion = ServerVersion.AutoDetect(connectionString);
+
+            options.UseMySql(connectionString, serverVersion);
         });
     }
 

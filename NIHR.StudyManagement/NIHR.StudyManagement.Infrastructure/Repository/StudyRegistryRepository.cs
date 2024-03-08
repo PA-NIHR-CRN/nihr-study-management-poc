@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Mysqlx.Expr;
 using NIHR.StudyManagement.Domain.Abstractions;
 using NIHR.StudyManagement.Domain.Configuration;
 using NIHR.StudyManagement.Domain.Exceptions;
@@ -118,7 +117,7 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Map(researchStudy);
+            return await GetAsync(request.Identifier);
         }
 
         public async Task<GovernmentResearchIdentifier> AddStudyToIdentifierAsync(AddStudyToExistingIdentifierRequestWithContext request,
@@ -187,7 +186,7 @@ namespace NIHR.StudyManagement.Infrastructure.Repository
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Map(griResearchStudy);
+            return await GetAsync(request.Identifier);
         }
 
         public async Task<GovernmentResearchIdentifier> GetAsync(string identifier, CancellationToken cancellationToken = default)
