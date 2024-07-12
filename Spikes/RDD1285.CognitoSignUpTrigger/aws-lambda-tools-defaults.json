@@ -1,0 +1,27 @@
+
+{
+    "Information" : [
+        "This file provides default values for the deployment wizard inside Visual Studio and the AWS Lambda commands added to the .NET Core CLI.",
+        "To learn more about the Lambda commands with the .NET Core CLI execute the following command at the command line in the project root directory.",
+        "dotnet lambda help",
+        "All the command line options for the Lambda command can be specified in this file."
+    ],
+    "profile"     : "Default",
+    "region"      : "eu-west-2",
+    "configuration" : "Release",
+    "function-architecture" : "x86_64",
+    "function-runtime"      : "dotnet8",
+    "function-memory-size"  : 512,
+    "function-timeout"      : 30,
+    "function-handler"      : "RDD1285.CognitoSignUpTrigger::RDD1285.CognitoSignUpTrigger.Function::FunctionHandler",
+    "function-name"         : "nihrd-lambda-sandbox-rdd1285-rddi",
+    "function-role"         : "arn:aws:iam::462580661309:role/nihrd-iam-sandbox-study-management-lambda-role",
+    "framework"             : "net8.0",
+    "function-description"  : "Lambda function to demonstrate work for JIRA ticket RDD-1285",
+    "package-type"          : "Zip",
+    "function-subnets"      : "",
+    "function-security-groups" : "",
+    "tracing-mode"             : "PassThrough",
+    "environment-variables"    : "",
+    "image-tag"                : ""
+}
